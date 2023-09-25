@@ -17,7 +17,7 @@ namespace Console_Project
 
         public async Task<(bool TryResult, string ParsedWord)> TryParseWord_Vlad_Optimized(
             string parsingWord,
-            bool isPrinted = false
+            bool isPrinted = true
         )
         {
             var parsedWord = parsingWord;
@@ -36,16 +36,15 @@ namespace Console_Project
                             parsedWord = parsingWord.Remove(i, termCharacter.Length);
                             parsedWord = parsedWord.Insert(i, Key);
                             var buffer = parsedWord;
-                            parsedWord = (
-                                await TryParseWord_Vlad_Optimized(parsedWord, isPrinted)
-                            ).ParsedWord;
+                            parsedWord = (await TryParseWord_Vlad_Optimized(parsedWord)).ParsedWord;
                             if (parsedWord == StartChain)
                             {
                                 if (isPrinted)
                                 {
                                     var index = buffer.IndexOf(Key);
                                     buffer[..index].PrintColored(ConsoleColor.DarkMagenta);
-                                    buffer.Substring(index, Key.Length)
+                                    buffer
+                                        .Substring(index, Key.Length)
                                         .PrintColored(ConsoleColor.Cyan);
                                     buffer[(index + 1)..].PrintColored(ConsoleColor.DarkMagenta);
                                     Console.Write("\t\t");

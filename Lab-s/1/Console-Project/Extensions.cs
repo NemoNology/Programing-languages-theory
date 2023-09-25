@@ -16,13 +16,13 @@ namespace Console_Project
             Console.ResetColor();
         }
 
-        public static List<int> FindAllIndexOf(this string str, string searchedValue)
+        public static List<int> FindAllIndices(this string str, string searchedValue)
         {
             List<int> indices = new();
             var n = searchedValue.Length;
             var len = str.Length - n;
 
-            for (int i = 0; i < len; i++)
+            for (int i = 0; i <= len; i++)
             {
                 if (str[i..].StartsWith(searchedValue))
                 {
@@ -51,5 +51,7 @@ namespace Console_Project
 
             return indices;
         }
+    
+        
     }
 }

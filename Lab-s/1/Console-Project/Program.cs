@@ -1,13 +1,13 @@
 ﻿using Console_Project;
 
 var (i1, i2) = (Fasade.endChain1, Fasade.endChain2);
+var (g1, g2, g3) = (Fasade.g1, Fasade.g2, Fasade.g3);
 
 // Fasade.BeautyOutput(Fasade.g_v1, i1);
 // Fasade.BeautyOutput(Fasade.g_v2, i2);
 
-var (g1, g2) = (Fasade.g1, Fasade.g2);
-
-g1.TryParseWord("T");
+// g1.TryParseWord_Recursive(i1);
+g2.TryParseWord_Recursive(i2);
 
 class Fasade
 {
@@ -53,6 +53,23 @@ class Fasade
             }
         };
 
+    public static Dictionary<string, List<string>> rules3 =
+        new()
+        {
+            {
+                "S",
+                new() { "T", "+T", "-T" }
+            },
+            {
+                "T",
+                new() { "F", "TF" }
+            },
+            {
+                "F",
+                new() { "0", "1", "2", "3", "4", "5", "6", "7", "8", "9" }
+            }
+        };
+
     public static List<(string, string)> rules_v1 =
         new()
         {
@@ -81,6 +98,7 @@ class Fasade
     public static Gramatic_Vlad g_v2 = new(rules_v2, "S");
     public static Gramatic g1 = new(rules1, "S");
     public static Gramatic g2 = new(rules2, "S");
+    public static Gramatic g3 = new(rules3, "S");
 
     public async static void BeautyOutput(Gramatic_Vlad g, string word)
     {
@@ -89,7 +107,7 @@ class Fasade
         "Parsing word ".PrintColored(ConsoleColor.Blue);
         word.PrintColored(ConsoleColor.Green);
         "...\n".PrintColored(ConsoleColor.Blue);
-        var res = (await g.TryParseWord_Vlad_Optimized(word, true)).TryResult;
+        var res = (await g.TryParseWord_Vlad_Optimized(word)).TryResult;
         $"Is ".PrintColored(ConsoleColor.Blue);
         word.PrintColored(ConsoleColor.Green);
         $" is possible? - ".PrintColored(ConsoleColor.Blue);
