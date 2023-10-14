@@ -15,7 +15,12 @@ namespace Console_Project
         }
         #endregion
 
-        public GramaticNM(List<string> vn, List<string> vt, List<(string, string)> rules, string startChain = "S")
+        public GramaticNM(
+            List<string> vn,
+            List<string> vt,
+            List<(string, string)> rules,
+            string startChain = "S"
+        )
         {
             Nonterminals = vn;
             Terminals = vt;
@@ -72,12 +77,17 @@ namespace Console_Project
             return (false, parsedWord);
         }
 
-        public void OutputLanguage(int strDepth = 10, int str2Depth = 20, string word = "S", int n = 0)
+        public void OutputLanguage(
+            int strDepth = 10,
+            int str2Depth = 20,
+            string word = "S",
+            int n = 0
+        )
         {
             string str = OutputGramatic(strDepth, word, n);
             string str2 = OutputGramatic(str2Depth, word, n);
-            str.PrintColored(ConsoleColor.Blue, isWriteLine: true);
-            str2.PrintColored(ConsoleColor.Blue, isWriteLine: true);
+            // str.PrintColored(ConsoleColor.Blue, isWriteLine: true);
+            // str2.PrintColored(ConsoleColor.Blue, isWriteLine: true);
             "L = { ".PrintColored(ConsoleColor.Green);
             int count = 0;
             List<(char, int)> list = new List<(char, int)>(str.Length);
@@ -125,14 +135,13 @@ namespace Console_Project
                 {
                     if (count == 1)
                     {
-                        $"'{pair1.Item1}'^n{count3}; ".PrintColored(ConsoleColor.DarkCyan);
+                        $"'{pair1.Item1}'^n{count3}; ".PrintColored(ConsoleColor.Blue);
                         count = 0;
                         count3++;
                     }
-                    else
-                    if (count > 1)
+                    else if (count > 1)
                     {
-                        $"'{pair1.Item1}'^m{count2}; ".PrintColored(ConsoleColor.DarkCyan);
+                        $"'{pair1.Item1}'^m{count2}; ".PrintColored(ConsoleColor.Blue);
                         count2++;
                     }
                 }
@@ -170,12 +179,10 @@ namespace Console_Project
                             {
                                 foreach (var rule2 in Rules)
                                 {
-
                                     if (newWord.Contains(rule2.Key))
                                     {
                                         c++;
                                     }
-
                                 }
                                 if (c == 0)
                                 {
@@ -184,7 +191,6 @@ namespace Console_Project
                             }
                         }
                     }
-
                 }
             }
             return newWord;
@@ -200,23 +206,28 @@ namespace Console_Project
         }
 
         /// <summary>
-        /// Переводит строку на формальный язык
+        /// пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅ
         /// </summary>
-        /// <param name="text">Строка для перевода</param>
-        /// <returns>Строка на формальном языке</returns>
-        public string Translate(string text = "S", int maxRepetitionsCount = 1000, bool isTreePrinted = false)
+        /// <param name="text">пїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ</param>
+        /// <returns>пїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅ</returns>
+        public string Translate(
+            string text = "S",
+            int maxRepetitionsCount = 1000,
+            bool isTreePrinted = false
+        )
         {
             int count = 0;
-            bool isEnd = false; // true - если ни одно из правил непреминимо
+            bool isEnd = false; // true - пїЅпїЅпїЅпїЅ пїЅпїЅ пїЅпїЅпїЅпїЅ пїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ
             List<string> buffer = new();
 
             while (count < maxRepetitionsCount)
             {
-                if (isEnd) break;
+                if (isEnd)
+                    break;
 
                 count++;
                 isEnd = true;
-                // применяем по очереди каждое правило языка к строке
+                // пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅ пїЅ пїЅпїЅпїЅпїЅпїЅпїЅ
                 foreach (var rule in Rules)
                 {
                     string key = rule.Key;
@@ -224,7 +235,7 @@ namespace Console_Project
 
                     int pos = text.IndexOf(key);
 
-                    if (pos != -1)  // если ключ найден
+                    if (pos != -1) // пїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅ
                     {
                         if (isTreePrinted)
                         {
@@ -270,7 +281,8 @@ namespace Console_Project
                         j++;
                     }
 
-                    res.GetCharsAsTreeNode(tabCount: i - 1, isOnlyLastHorizontalFill: true).PrintColored(color, isWriteLine: true);
+                    res.GetCharsAsTreeNode(tabCount: i - 1, isOnlyLastHorizontalFill: true)
+                        .PrintColored(color, isWriteLine: true);
 
                     i++;
                 }
@@ -282,7 +294,7 @@ namespace Console_Project
         }
 
         /// <summary>
-        /// Возвращает тип грамматики
+        /// пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ
         /// </summary>
         /// <returns></returns>
         public string GetTypeGrammar()
@@ -295,10 +307,10 @@ namespace Console_Project
             bool isEachTermPosSmaller = true;
             foreach (var r in Rules)
             {
-                // проверка проинадлежности первому типу грамматики
+                // пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ
                 isTypeOne &= r.Key.Length <= r.Value.Length;
 
-                // проверка принадлежности второму типу
+                // пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅ
                 foreach (var vt in Terminals)
                 {
                     isTypeTwo &= !r.Key.Contains(vt);
@@ -311,12 +323,18 @@ namespace Console_Project
                     foreach (var vn in Nonterminals)
                     {
                         int TEMP = r.Value.IndexOf(vn);
-                        if (TEMP != -1) { nonTerminlPositions.Add(TEMP); }
+                        if (TEMP != -1)
+                        {
+                            nonTerminlPositions.Add(TEMP);
+                        }
                     }
                     foreach (var vt in Terminals)
                     {
                         int TEMP = r.Value.IndexOf(vt);
-                        if (TEMP != -1) { terminlPositions.Add(TEMP); }
+                        if (TEMP != -1)
+                        {
+                            terminlPositions.Add(TEMP);
+                        }
                     }
                     foreach (int pos in terminlPositions)
                     {
@@ -334,11 +352,49 @@ namespace Console_Project
             }
             Console.WriteLine("Is gramatic is related to next types of Khomskiy gramar:");
             string res = "0;";
-            if (isTypeOne) res += " 1;";
-            if (isTypeTwo) res += " 2;";
-            if (isTypeThree) res += " 3;";
+            if (isTypeOne)
+                res += " 1;";
+            if (isTypeTwo)
+                res += " 2;";
+            if (isTypeThree)
+                res += " 3;";
             return res;
         }
 
+        public string findChain(string word, out bool isFoundable, bool isPrinted = false)
+        {
+            string newWord = word;
+            for (int k = 1; k <= word.Length; k++)
+            {
+                string termCharacter = "";
+                for (int i = word.Length - k; i >= 0; i--)
+                {
+                    termCharacter = termCharacter.Insert(0, word[i].ToString());
+                    for (int j = 0; j < Rules.Count; j++)
+                    {
+                        if (Rules[j].Value == termCharacter)
+                        {
+                            newWord = word.Remove(i, termCharacter.Length);
+                            newWord = newWord.Insert(i, Rules[j].Key);
+                            string str = newWord;
+                            newWord = findChain(newWord, out _, isPrinted);
+                            if (newWord == "S")
+                            {
+                                if (isPrinted)
+                                {
+                                    $"\n{str}\t[{Rules[j].Key} --> {Rules[j].Value}]".PrintColored(
+                                        ConsoleColor.DarkCyan
+                                    );
+                                }
+                                isFoundable = true;
+                                return newWord;
+                            }
+                        }
+                    }
+                }
+            }
+            isFoundable = false;
+            return newWord;
+        }
     }
 }

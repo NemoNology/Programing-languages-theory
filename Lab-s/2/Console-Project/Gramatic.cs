@@ -137,7 +137,6 @@ namespace Console_Project
             }
 
             List<(int groupIndex, List<(string key, int count)>)> result3 = new();
-
         }
 
         public List<string> GetAllCompletedWordsByDepth(int depth)
