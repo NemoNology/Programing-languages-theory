@@ -2,8 +2,10 @@ namespace Console_Project
 {
     public class Gramatic
     {
-        Dictionary<string, List<string>> Rules;
-        Dictionary<string, List<string>> RulesReversed = null!;
+        public Dictionary<string, List<string>> Rules { get; private set; }
+        public Dictionary<string, List<string>> RulesReversed { get; private set; } = null!;
+        public List<string> Terminals { get; private set; } = null!;
+        public List<string> Nonterminals { get; private set; } = null!;
         string StartChain;
 
         public Gramatic(Dictionary<string, List<string>> rules, string startChain)
@@ -34,11 +36,15 @@ namespace Console_Project
                 counter++;
 
                 if (isPrinted)
-                    Console.Write($"\t{q0} --> [ ");
+                {
+                    q0.PrintColored(ConsoleColor.Cyan);
+                    Console.Write(" <-- [ ");
+                }
 
                 foreach (var key in keys)
                 {
                     var indices = q0.FindAllIndices(key);
+                    var lengthBuffer = indices.Count;
                     counter++;
 
                     foreach (var index in indices)
@@ -53,19 +59,19 @@ namespace Console_Project
 
                             if (buffer == StartChain)
                             {
+                                buffer.PrintColored(ConsoleColor.Magenta);
                                 if (isPrinted)
-                                {
-                                    buffer.PrintColored(ConsoleColor.Magenta);
-                                    // Console.Write("\n]");
-                                    $"\n{word} is possible [Iterations: {counter}]".PrintColored(
-                                        ConsoleColor.Green
-                                    );
-                                }
+                                    Console.Write(" ]");
+                                $"\n{word} is possible [Iterations: {counter}]\n".PrintColored(
+                                    ConsoleColor.Green
+                                );
                                 return true;
                             }
 
                             if (isPrinted)
+                            {
                                 Console.Write(buffer + "; ");
+                            }
 
                             q.Push(buffer);
                         }
@@ -73,12 +79,107 @@ namespace Console_Project
                 }
 
                 if (isPrinted)
-                    Console.Write("];");
+                    Console.Write("]\n");
             }
 
             if (isPrinted)
                 $"\n{word} is not possible [Iterations: {counter}]".PrintColored(ConsoleColor.Red);
             return false;
+        }
+
+        public void PrintLanguge()
+        {
+            var str = GetAllCompletedWordsByDepth(3)[0];
+
+            int counter = 0;
+            var strLen = str.Length;
+            List<(char key, int count)> result = new();
+
+            while (counter < strLen)
+            {
+                var c = str[counter];
+                var bufferChainCounter = 1;
+
+                while (counter + 1 < strLen && str[counter + 1] == c)
+                {
+                    bufferChainCounter++;
+                    counter++;
+                }
+
+                result.Add((c, bufferChainCounter));
+
+                if (bufferChainCounter == 1)
+                {
+                    counter++;
+                }
+            }
+            counter = 0;
+            var resLen = result.Count;
+            List<(string key, int count)> result2 = new();
+            while (counter < resLen)
+            {
+                var k = result[counter].key;
+                var c = result[counter].count;
+                var bufferChain = k.ToString();
+
+                while (counter + 1 < resLen && result[counter + 1].count == c)
+                {
+                    bufferChain += result[counter + 1].key;
+                    counter++;
+                }
+
+                result2.Add((bufferChain, c));
+
+                if (bufferChain == k.ToString())
+                {
+                    counter++;
+                }
+            }
+
+            List<(int groupIndex, List<(string key, int count)>)> result3 = new();
+
+        }
+
+        public List<string> GetAllCompletedWordsByDepth(int depth)
+        {
+            List<string> words = new();
+            Queue<string> q = new();
+            q.Enqueue(StartChain);
+            string buffer;
+
+            var keys = Rules.Keys;
+
+            for (int i = 0; i <= depth; i++)
+            {
+                buffer = q.Dequeue();
+
+                foreach (var key in keys)
+                {
+                    var indices = buffer.FindAllIndices(key);
+
+                    foreach (var index in indices)
+                    {
+                        var rules = Rules[key];
+
+                        foreach (var value in rules)
+                        {
+                            q.Enqueue(buffer.Remove(index, key.Length).Insert(index, value));
+                        }
+                    }
+                }
+            }
+
+            while (q.Count > 0)
+            {
+                buffer = q.Dequeue();
+
+                if (TryCompleteWord(buffer, out var list))
+                {
+                    words.Add(buffer);
+                }
+            }
+
+            return words;
         }
 
         public bool TryParseWord_Surf(string word, bool isPrinted = true)
@@ -141,26 +242,65 @@ namespace Console_Project
         {
             foreach (var key in Rules.Keys)
             {
-                var indices = word.FindAllIndices(key);
-
-                if (indices.Count > 0)
+                if (word.Any(key))
                 {
                     return false;
                 }
             }
 
+            return true;
+        }
+
+        bool TryCompleteWord(string word, out List<string> completedWords)
+        {
+            var keys = Rules.Keys;
+            var res = new List<string>();
+
+            do
+            {
+                foreach (var key in keys)
+                {
+                    var indices = word.FindAllIndices(key);
+
+                    foreach (var index in indices)
+                    {
+                        foreach (var value in Rules[key])
+                        {
+                            var kl = key.Length;
+
+                            if (value.Length <= kl)
+                            {
+                                res.Add(word.Remove(index, kl).Insert(index, value));
+                            }
+                        }
+                    }
+                }
+            } while (res.Any(x => !IsCompletedWord(x)));
+
+            completedWords = res;
             return false;
         }
 
         void Init()
         {
+            var terminals = new List<string>();
+            var nonterminals = new List<string>();
             var valuesBuffer = new List<(string key, string value)>();
             Dictionary<string, List<string>> res = new();
 
-            foreach (var key in Rules.Keys)
+            var keys = Rules.Keys;
+
+            foreach (var key in keys)
             {
+                nonterminals.Add(key);
+
                 foreach (var value in Rules[key])
                 {
+                    if (!terminals.Contains(value))
+                    {
+                        terminals.Add(value);
+                    }
+
                     valuesBuffer.Add((key, value));
                 }
             }
@@ -173,6 +313,8 @@ namespace Console_Project
                 res.Add(key, valuesBuffer.Where(x => x.value == key).Select(x => x.key).ToList());
             }
 
+            Terminals = terminals;
+            Nonterminals = nonterminals;
             RulesReversed = res;
         }
     }
