@@ -15,7 +15,7 @@ namespace Console_Project
             Init();
         }
 
-        public bool TryParseWord_Recursive(string word, string startChain, bool isPrinted = true)
+        public bool TryParseWord_Recursive(string word, bool isPrinted = true)
         {
             Stack<string> q = new();
             q.Push(word);
@@ -57,7 +57,7 @@ namespace Console_Project
                             buffer = q0.Remove(index, key.Length).Insert(index, value);
                             counter++;
 
-                            if (buffer == startChain)
+                            if (buffer == StartChain)
                             {
                                 buffer.PrintColored(ConsoleColor.Magenta);
                                 if (isPrinted)
@@ -87,14 +87,65 @@ namespace Console_Project
             return false;
         }
 
+        public void PrintLanguge()
+        {
+            var str = GetAllCompletedWordsByDepth(3)[0];
+
+            int counter = 0;
+            var strLen = str.Length;
+            List<(char key, int count)> result = new();
+
+            while (counter < strLen)
+            {
+                var c = str[counter];
+                var bufferChainCounter = 1;
+
+                while (counter + 1 < strLen && str[counter + 1] == c)
+                {
+                    bufferChainCounter++;
+                    counter++;
+                }
+
+                result.Add((c, bufferChainCounter));
+
+                if (bufferChainCounter == 1)
+                {
+                    counter++;
+                }
+            }
+            counter = 0;
+            var resLen = result.Count;
+            List<(string key, int count)> result2 = new();
+            while (counter < resLen)
+            {
+                var k = result[counter].key;
+                var c = result[counter].count;
+                var bufferChain = k.ToString();
+
+                while (counter + 1 < resLen && result[counter + 1].count == c)
+                {
+                    bufferChain += result[counter + 1].key;
+                    counter++;
+                }
+
+                result2.Add((bufferChain, c));
+
+                if (bufferChain == k.ToString())
+                {
+                    counter++;
+                }
+            }
+
+            List<(int groupIndex, List<(string key, int count)>)> result3 = new();
+
+        }
+
         public List<string> GetAllCompletedWordsByDepth(int depth)
         {
             List<string> words = new();
             Queue<string> q = new();
             q.Enqueue(StartChain);
             string buffer;
-
-            Reduce();
 
             var keys = Rules.Keys;
 
@@ -265,30 +316,6 @@ namespace Console_Project
             Terminals = terminals;
             Nonterminals = nonterminals;
             RulesReversed = res;
-        }
-
-        void Reduce()
-        {
-            foreach (var terminal in Terminals)
-            {
-                foreach (var nonterminal in Nonterminals)
-                {
-                    if (TryParseWord_Recursive(terminal, nonterminal))
-                    {
-                        List<string> buffer = new();
-
-                        if (Rules.TryGetValue(nonterminal, out buffer!))
-                        {
-                            buffer.Add(terminal);
-                        }
-
-                        if (RulesReversed.TryGetValue(terminal, out buffer!))
-                        {
-                            buffer.Add(nonterminal);
-                        }
-                    }
-                }
-            }
         }
     }
 }
