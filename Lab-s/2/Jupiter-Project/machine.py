@@ -140,7 +140,7 @@ class Machine:
         for r in rules:
             print(f'{r[0]} -> {r[1]};')
 
-    def findChain(self, chain: str, isPrintable: bool = False) -> bool:
+    def findChain(self, chain: str, isPrintable: bool = True) -> bool:
         s = []
         s.append((chain, []))
         rules = self.rules
