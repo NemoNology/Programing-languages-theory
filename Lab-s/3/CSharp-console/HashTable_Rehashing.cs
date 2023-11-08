@@ -1,4 +1,4 @@
-class HashTable_Rehashing<KeyType, ValueType>
+class HashTable_Rehashing<KeyType, ValueType> where KeyType : notnull where ValueType : notnull
 {
     List<(KeyType Key, ValueType Value)?> _values;
     Func<string, int> _hashFunction;
@@ -35,7 +35,7 @@ class HashTable_Rehashing<KeyType, ValueType>
     public void Add(KeyType key, ValueType value)
     {
         var capacity = _values.Capacity;
-        int index = _hashFunction(key!.ToString()!) % capacity;
+        int index = _hashFunction(key.ToString()!) % capacity;
         while (_values[index] != null)
             index = (index + 1) % capacity;
 
@@ -48,9 +48,9 @@ class HashTable_Rehashing<KeyType, ValueType>
     public bool Contains(KeyType key)
     {
         var capacity = _values.Capacity;
-        int index = _hashFunction(key!.ToString()!) % capacity;
+        int index = _hashFunction(key.ToString()!) % capacity;
         if (_values[index] != null
-                && _values[index]!.Value.Key!.Equals(key))
+                && _values[index]!.Value.Key.Equals(key))
             return true;
         else
         {
@@ -58,11 +58,11 @@ class HashTable_Rehashing<KeyType, ValueType>
             do
                 index = (index + 1) % capacity;
             while (_values[index] != null
-                        && !_values[index]!.Value.Key!.Equals(key)
+                        && !_values[index]!.Value.Key.Equals(key)
                         && index != indexBuffer);
 
             if (_values[index] == null
-                || !_values[index]!.Value.Key!.Equals(key))
+                || !_values[index]!.Value.Key.Equals(key))
                 return false;
 
             return true;
@@ -72,7 +72,7 @@ class HashTable_Rehashing<KeyType, ValueType>
     public void Remove(KeyType key)
     {
         var capacity = _values.Capacity;
-        int index = _hashFunction(key!.ToString()!) % capacity;
+        int index = _hashFunction(key.ToString()!) % capacity;
         if (_values[index] != null
                 && _values[index]!.Value.Key!.Equals(key))
             _values[index] = null;
@@ -99,7 +99,7 @@ class HashTable_Rehashing<KeyType, ValueType>
     public void UpdateValue(KeyType key, ValueType value)
     {
         var capacity = _values.Capacity;
-        int index = _hashFunction(key!.ToString()!) % capacity;
+        int index = _hashFunction(key.ToString()!) % capacity;
         if (_values[index] != null
                 && _values[index]!.Value.Key!.Equals(key))
             _values[index] = (_values[index]!.Value.Key, value);
@@ -123,7 +123,7 @@ class HashTable_Rehashing<KeyType, ValueType>
     public ValueType GetValue(KeyType key)
     {
         var capacity = _values.Capacity;
-        int index = _hashFunction(key!.ToString()!) % capacity;
+        int index = _hashFunction(key.ToString()!) % capacity;
         if (_values[index] != null
                 && _values[index]!.Value.Key!.Equals(key))
             return _values[index]!.Value.Value;
