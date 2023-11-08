@@ -34,6 +34,8 @@ class HashTable_Rehashing<KeyType, ValueType> where KeyType : notnull where Valu
 
     public void Add(KeyType key, ValueType value)
     {
+        if (_values.Where(x => x is not null).Select(x => x!.Value.Key).Contains(key))
+            throw new ArgumentException($"Key {key} already exists");
         var capacity = _values.Capacity;
         int index = _hashFunction(key.ToString()!) % capacity;
         while (_values[index] != null)
