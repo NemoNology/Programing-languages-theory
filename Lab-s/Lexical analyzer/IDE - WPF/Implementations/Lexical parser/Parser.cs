@@ -73,20 +73,19 @@ namespace CSharp_console.Implementations.LexicalParser
             throw new ArgumentException($"Unknown token in \"{details}\"");
         }
 
-        public List<(string ID, string Value)> Parse(string appCode, IEnumerable<Token>? tokens = null)
+        public void Anilize(string appCode, IEnumerable<Token>? tokens = null)
         {
-            List<(string ID, string Value)> variables = new();
             Stack<(Token CurrentToken, IEnumerable<TokenType> ExceptedTokens)> s = new();
             tokens ??= GetTokens(appCode);
             var tokensList = tokens.ToList();
+            s.Push((tokensList[0], new List<TokenType> { TokenType.ID, TokenType.SEMICOLON }));
             int counter = 1;
-            s.Push((tokensList[counter], new List<TokenType> { TokenType.ID, TokenType.SEMICOLON }));
 
             while (s.Count > 0 && counter < tokensList.Count)
             {
-                var tokenInfo = s.Pop();
-                var currentTokenType = tokenInfo.CurrentToken.TokenType;
-                var exceptedTokenTypes = tokenInfo.ExceptedTokens;
+                var (CurrentToken, ExceptedTokens) = s.Pop();
+                var currentTokenType = CurrentToken.TokenType;
+                var exceptedTokenTypes = ExceptedTokens;
                 if (!exceptedTokenTypes.Contains(currentTokenType))
                 {
                     var excTTasStr = "";
@@ -94,12 +93,23 @@ namespace CSharp_console.Implementations.LexicalParser
                     {
                         excTTasStr += $" {Enum.GetName(exceptedTokenType)} or";
                     }
-                    throw new ArgumentException($"After {Enum.GetName(currentTokenType)} at {tokenInfo.CurrentToken.Position} Excepted{excTTasStr[..^2]}\nbut got {Enum.GetName(currentTokenType)}");
+                    throw new ArgumentException($"Excepted{excTTasStr[..^2]} at {CurrentToken.Position}\nbut got {Enum.GetName(currentTokenType)}");
                 }
 
                 s.Push((tokensList[counter], GetExceptedTokensTypes(currentTokenType)));
                 counter += 1;
             }
+        }
+
+        public List<(string ID, string Value)> GetVariables(string appCode, IEnumerable<Token>? tokens = null)
+        {
+            List<(string ID, string Value)> variables = new();
+            tokens ??= GetTokens(appCode);
+            if (tokens.Count() < 1)
+                return variables;
+            Stack<Token> s = new();
+            var tokensList = tokens.ToList();
+            s.Push(tokensList[0]);
 
             return variables;
         }
@@ -111,7 +121,7 @@ namespace CSharp_console.Implementations.LexicalParser
             switch (tokenType)
             {
                 case TokenType.ID:
-                    exceptedTokens.AddRange(new [] { TokenType.ASSIGN, TokenType.RPAR, TokenType.OR, TokenType.XOR, TokenType.AND, TokenType.SEMICOLON });
+                    exceptedTokens.AddRange(new[] { TokenType.ASSIGN, TokenType.RPAR, TokenType.OR, TokenType.XOR, TokenType.AND, TokenType.SEMICOLON });
                     break;
                 case TokenType.LPAR:
                     exceptedTokens.AddRange(new[] { TokenType.ID, TokenType.RPAR, TokenType.LPAR, TokenType.NOT });
@@ -120,7 +130,7 @@ namespace CSharp_console.Implementations.LexicalParser
                     exceptedTokens.AddRange(new[] { TokenType.OR, TokenType.XOR, TokenType.AND, TokenType.RPAR, TokenType.SEMICOLON });
                     break;
                 case TokenType.ASSIGN:
-                    exceptedTokens.AddRange(new[] { TokenType.ID, TokenType.LPAR, TokenType.NOT });
+                    exceptedTokens.AddRange(new[] { TokenType.ID, TokenType.LPAR, TokenType.NOT, TokenType.ZERO, TokenType.ONE });
                     break;
                 case TokenType.OR:
                     exceptedTokens.AddRange(new[] { TokenType.ID, TokenType.LPAR, TokenType.NOT });
