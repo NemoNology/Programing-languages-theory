@@ -5,6 +5,7 @@ using CSharp_console.Implementations.LexicalParser;
 using CSharp_console.Implementations.LexicalParser.Tokens;
 using System;
 using System.Threading;
+using IDE.Implementations.Lexical_parser;
 
 namespace IDE
 {
@@ -32,15 +33,71 @@ namespace IDE
                 new(TokenType.SEMICOLON, ";")
             };
 
-            lexer = new(templates);
-            timer = new(Analize);
-            timer.Change(500, 500);
+            Func<TokenType, bool> IsNumber = new((TokenType tokenType) => !Enum.Equals(tokenType, TokenType.ZERO) || !Enum.Equals(tokenType, TokenType.ONE));
+
+            lexer = new(templates,
+                new Operation<TokenType, TokenType>(
+                    new Dictionary<TokenType, Func<TokenType, TokenType>>()
+                    {
+                        { TokenType.NOT, (TokenType operand) =>
+                        {
+                            if (operand is TokenType.ONE)
+                                return TokenType.ZERO;
+                            else if (operand is TokenType.ZERO)
+                                return TokenType.ONE;
+                            else throw new ArgumentException($"Invalid operand ({nameof(operand)}) for {nameof(TokenType.NOT)} operation");
+                        } }
+                    },
+                    new Dictionary<TokenType, Func<TokenType, TokenType, TokenType>>()
+                    {
+                        { TokenType.OR, (TokenType operand1, TokenType operand2) =>
+                        {
+                            if (!IsNumber(operand1) || !IsNumber(operand2))
+                            {
+                                throw new ArgumentException($"Invalid operand(s) for {nameof(TokenType.OR)} operation");
+                            }
+                            else if (operand1 is TokenType.ONE || operand2 is TokenType.ONE)
+                            {
+                                return TokenType.ONE;
+                            }
+                            else return TokenType.ZERO;
+                        } },
+                        { TokenType.XOR, (TokenType operand1, TokenType operand2) =>
+                        {
+                            if (!IsNumber(operand1) || !IsNumber(operand2))
+                            {
+                                throw new ArgumentException($"Invalid operand(s) for {nameof(TokenType.XOR)} operation");
+                            }
+                            else if (Enum.Equals(operand1, operand2))
+                            {
+                                return TokenType.ZERO;
+                            }
+                            else return TokenType.ONE;
+                        } },
+                        { TokenType.AND, (TokenType operand1, TokenType operand2) =>
+                        {
+                            if (!IsNumber(operand1) || !IsNumber(operand2))
+                            {
+                                throw new ArgumentException($"Invalid operand(s) for {nameof(TokenType.AND)} operation");
+                            }
+                            else if (operand1 is TokenType.ONE && operand2 is TokenType.ONE)
+                            {
+                                return TokenType.ONE;
+                            }
+                            else return TokenType.ZERO;
+                        } }
+                    }
+                ));
         }
 
         Parser lexer;
-        Timer timer;
 
-        void Analize(object? state)
+        private void OnCodeInputTextChanged(object sender, TextChangedEventArgs args)
+        {
+            Analize();
+        }
+
+        void Analize()
         {
             Dispatcher.Invoke(() =>
             {
@@ -53,7 +110,7 @@ namespace IDE
                     outputParseResult.Items.Clear();
                     var codeFragment = inputCodeFragment.Text;
                     var tokens = lexer.GetTokens(codeFragment);
-                    var variables = lexer.Anilize(codeFragment, tokens);
+                    var variables = lexer.Parse(codeFragment, tokens);
 
                     foreach (var token in tokens)
                     {

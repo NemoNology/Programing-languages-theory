@@ -1,4 +1,5 @@
 ﻿using CSharp_console.Implementations.LexicalParser.Tokens;
+using IDE.Implementations.Lexical_parser;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -11,11 +12,27 @@ namespace CSharp_console.Implementations.LexicalParser
         /// <summary>
         /// Available tokens
         /// </summary>
-        readonly IEnumerable<TokenTemplate> TokenTemplates;
+        public IEnumerable<TokenTemplate> TokenTemplates { get; private set; }
+        static readonly Dictionary<TokenType, IEnumerable<TokenType>> ExceptedTokenTypesForTokenType = new()
+        {
+            { TokenType.AND, new TokenType[] { TokenType.ID, TokenType.LPAR, TokenType.NOT, TokenType.ZERO, TokenType.ONE } },
+            { TokenType.ASSIGN, new TokenType[] { TokenType.ID, TokenType.LPAR, TokenType.NOT, TokenType.ZERO, TokenType.ONE } },
+            { TokenType.ID, new TokenType[] { TokenType.ASSIGN, TokenType.RPAR, TokenType.OR, TokenType.XOR, TokenType.AND, TokenType.SEMICOLON } },
+            { TokenType.LPAR, new TokenType[] { TokenType.ID, TokenType.RPAR, TokenType.LPAR, TokenType.NOT, TokenType.ZERO, TokenType.ONE } },
+            { TokenType.NOT, new TokenType[] { TokenType.ID, TokenType.LPAR, TokenType.ZERO, TokenType.ONE, TokenType.NOT } },
+            { TokenType.ONE, new TokenType[] { TokenType.SEMICOLON, TokenType.OR, TokenType.XOR, TokenType.AND, TokenType.RPAR } },
+            { TokenType.OR, new TokenType[] { TokenType.ID, TokenType.LPAR, TokenType.NOT, TokenType.ZERO, TokenType.ONE } },
+            { TokenType.RPAR, new TokenType[] { TokenType.OR, TokenType.XOR, TokenType.AND, TokenType.RPAR, TokenType.SEMICOLON } },
+            { TokenType.SEMICOLON, new TokenType[] { TokenType.ID, TokenType.SEMICOLON } },
+            { TokenType.XOR, new TokenType[] { TokenType.ID, TokenType.LPAR, TokenType.NOT, TokenType.ZERO, TokenType.ONE } },
+            { TokenType.ZERO, new TokenType[] { TokenType.SEMICOLON, TokenType.OR, TokenType.XOR, TokenType.AND, TokenType.RPAR } },
+        };
+        public Operation<TokenType, TokenType> Operation { get; private set; }
 
-        public Parser(IEnumerable<TokenTemplate> tokenTemplates)
+        public Parser(IEnumerable<TokenTemplate> tokenTemplates, Operation<TokenType, TokenType> operation)
         {
             TokenTemplates = tokenTemplates;
+            Operation = operation;
         }
 
         /// <summary>
@@ -96,68 +113,144 @@ namespace CSharp_console.Implementations.LexicalParser
                     throw new ArgumentException($"Excepted{excTTasStr[..^2]} at {CurrentToken.Position}\nbut got {Enum.GetName(currentTokenType)}");
                 }
 
-                s.Push((tokensList[counter], GetExceptedTokensTypes(currentTokenType)));
+                s.Push((tokensList[counter], ExceptedTokenTypesForTokenType[currentTokenType]));
                 counter += 1;
             }
         }
 
-        public List<(string ID, string Value)> GetVariables(string appCode, IEnumerable<Token>? tokens = null)
+        public List<(string ID, string Value)> Parse(string appCode, IEnumerable<Token>? tokens = null)
         {
             List<(string ID, string Value)> variables = new();
             tokens ??= GetTokens(appCode);
             if (tokens.Count() < 1)
                 return variables;
-            Stack<Token> s = new();
+
+            var exceptedTokenTypes = new TokenType[] { TokenType.ID, TokenType.SEMICOLON };
+            var s = new Stack<Token>();
+            var operands = new Stack<Token>();
+            var operations = new Stack<TokenType>();
             var tokensList = tokens.ToList();
-            s.Push(tokensList[0]);
+            TokenType tokenTypeBuffer;
+            Token operandBuffer = null!;
+
+            try
+            {
+                foreach (var token in tokensList)
+                {
+                    tokenTypeBuffer = token.TokenType;
+
+                    if (!exceptedTokenTypes.Contains(tokenTypeBuffer))
+                    {
+                        var excTTasStr = "";
+                        foreach (var exceptedTokenType in exceptedTokenTypes)
+                        {
+                            excTTasStr += $" {Enum.GetName(exceptedTokenType)} or";
+                        }
+                        throw new ArgumentException($"Excepted{excTTasStr[..^2]} at {token.Position} but got {Enum.GetName(tokenTypeBuffer)}");
+                    }
+
+                    if (tokenTypeBuffer is TokenType.ID || tokenTypeBuffer is TokenType.ZERO || tokenTypeBuffer is TokenType.ONE)
+                        operands.Push(token);
+                    else if (tokenTypeBuffer is TokenType.RPAR)
+                    {
+                        while (operations.Peek() is not TokenType.LPAR)
+                        {
+                            var variableBuffer = Calculate(ref operands, ref operations, variables);
+
+                            if (variableBuffer is not null)
+                                variables.Add(((string, string))variableBuffer);
+                        }
+                        operations.Pop();
+                    }
+                    else
+                        operations.Push(tokenTypeBuffer);
+
+                    exceptedTokenTypes = (TokenType[])ExceptedTokenTypesForTokenType[token.TokenType];
+                }
+
+                while (operations.Count > 0)
+                {
+                    var variableBuffer = Calculate(ref operands, ref operations, variables);
+
+                    if (variableBuffer is not null)
+                    {
+                        var index = variables.FindIndex(x => x.ID == variableBuffer.Value.Item1);
+                        if (index >= 0)
+                            variables[index] = ((string, string))variableBuffer;
+                        else
+                            variables.Add(((string, string))variableBuffer);
+                    }
+                }
+            }
+            catch (InvalidOperationException ioe)
+            {
+                throw new InvalidOperationException(ioe.Message + $" at {(operandBuffer is null ? 0 : operandBuffer.Position)}");
+            }
 
             return variables;
         }
 
-        IEnumerable<TokenType> GetExceptedTokensTypes(TokenType tokenType)
+        (string, string)? Calculate(
+            ref Stack<Token> operands,
+            ref Stack<TokenType> operations,
+            IEnumerable<(string ID, string Value)> variables)
         {
-            List<TokenType> exceptedTokens = new();
-
-            switch (tokenType)
+            var isVariable = bool (Token token, IEnumerable<(string ID, string Value)> variables, out TokenType value) =>
             {
-                case TokenType.ID:
-                    exceptedTokens.AddRange(new[] { TokenType.ASSIGN, TokenType.RPAR, TokenType.OR, TokenType.XOR, TokenType.AND, TokenType.SEMICOLON });
-                    break;
-                case TokenType.LPAR:
-                    exceptedTokens.AddRange(new[] { TokenType.ID, TokenType.RPAR, TokenType.LPAR, TokenType.NOT });
-                    break;
-                case TokenType.RPAR:
-                    exceptedTokens.AddRange(new[] { TokenType.OR, TokenType.XOR, TokenType.AND, TokenType.RPAR, TokenType.SEMICOLON });
-                    break;
+                if (token.TokenType == TokenType.ID)
+                {
+                    if (!variables.Any(x => x.ID == token.Text))
+                        throw new ArgumentException($"Unknown variable {token.Text} at {token.Position})");
+
+                    value =
+                        variables.First(x => x.ID == token.Text)
+                        .Value == Enum.GetName(TokenType.ZERO)
+                        ? TokenType.ZERO : TokenType.ONE;
+                    return true;
+                }
+
+                value = TokenType.ZERO;
+                return false;
+            };
+            TokenType value;
+            TokenType operandTypeBuffer;
+
+            var tokenTypeBuffer = operations.Pop();
+            switch (tokenTypeBuffer)
+            {
                 case TokenType.ASSIGN:
-                    exceptedTokens.AddRange(new[] { TokenType.ID, TokenType.LPAR, TokenType.NOT, TokenType.ZERO, TokenType.ONE });
+                    var operand1 = operands.Pop();
+                    var varBuffer = operands.Pop();
+                    if (varBuffer.TokenType is not TokenType.ID)
+                        throw new ArgumentException($"Assignment can be applied only to variables ({varBuffer.Position})");
+                    else if (isVariable(operand1, variables, out value))
+                        return (varBuffer.Text, Enum.GetName(value)!);
+
+                    return (varBuffer.Text, operand1.Text);
+
+                case TokenType.OR or TokenType.XOR or TokenType.AND:
+                    operand1 = operands.Pop();
+                    operandTypeBuffer = operand1.TokenType;
+                    if (isVariable(operand1, variables, out value))
+                        operandTypeBuffer = value;
+                    var result = Operation.Calculate(tokenTypeBuffer, operandTypeBuffer, operands.Pop().TokenType);
+                    operands.Push(new Token(result, Enum.GetName(result)!, operand1.Position));
                     break;
-                case TokenType.OR:
-                    exceptedTokens.AddRange(new[] { TokenType.ID, TokenType.LPAR, TokenType.NOT });
-                    break;
-                case TokenType.XOR:
-                    exceptedTokens.AddRange(new[] { TokenType.ID, TokenType.LPAR, TokenType.NOT });
-                    break;
-                case TokenType.AND:
-                    exceptedTokens.AddRange(new[] { TokenType.ID, TokenType.LPAR, TokenType.NOT });
-                    break;
+
                 case TokenType.NOT:
-                    exceptedTokens.AddRange(new[] { TokenType.ID, TokenType.LPAR });
+                    operand1 = operands.Pop();
+                    operandTypeBuffer = operand1.TokenType;
+                    if (isVariable(operand1, variables, out value))
+                        operandTypeBuffer = value;
+                    result = Operation.Calculate(tokenTypeBuffer, operandTypeBuffer);
+                    operands.Push(new Token(result, Enum.GetName(result)!, operand1.Position));
                     break;
-                case TokenType.ZERO:
-                    exceptedTokens.AddRange(new[] { TokenType.SEMICOLON, TokenType.OR, TokenType.XOR, TokenType.AND });
-                    break;
-                case TokenType.ONE:
-                    exceptedTokens.AddRange(new[] { TokenType.SEMICOLON, TokenType.OR, TokenType.XOR, TokenType.AND });
-                    break;
-                case TokenType.SEMICOLON:
-                    exceptedTokens.AddRange(new[] { TokenType.ID });
-                    break;
+
                 default:
                     break;
             }
 
-            return exceptedTokens;
+            return null;
         }
     }
 }
