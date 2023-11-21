@@ -23,8 +23,7 @@
         <TextBox x:Name="inputCodeFragment"
                  Grid.Row="1" 
                  Margin="10"
-                 Background="FloralWhite" 
-                 TextChanged="OnInputCodeFragmentTextChanged"
+                 Background="FloralWhite"
                  AcceptsReturn="True"
                  AcceptsTab="True"
                  />
@@ -39,7 +38,7 @@
 
             <TabControl>
                 <TabItem Header="Errors">
-                    <Label x:Name="outputError" TextBlock.FontWeight="Medium"/>
+                    <TextBlock x:Name="outputError" FontWeight="Medium" TextWrapping="Wrap"/>
                 </TabItem>
             </TabControl>
 

@@ -4,6 +4,7 @@ using System.Windows.Controls;
 using CSharp_console.Implementations.LexicalParser;
 using CSharp_console.Implementations.LexicalParser.Tokens;
 using System;
+using System.Threading;
 
 namespace IDE
 {
@@ -32,37 +33,45 @@ namespace IDE
             };
 
             lexer = new(templates);
+            timer = new(Analize);
+            timer.Change(500, 500);
         }
 
         Parser lexer;
+        Timer timer;
 
-        private void OnInputCodeFragmentTextChanged(object sender, TextChangedEventArgs e)
+        void Analize(object? state)
         {
-            try
+            Dispatcher.Invoke(() =>
             {
-                outputTokenTable.Items.Clear();
-                outputParseResult.Items.Clear();
-                var codeFragment = inputCodeFragment.Text;
-                var tokens = lexer.GetTokens(codeFragment);
-                var variables = lexer.Parse(codeFragment, tokens);
+                if (inputCodeFragment.Text.Trim() == "")
+                    return;
 
-                foreach (var token in tokens)
+                try
                 {
-                    outputTokenTable.Items.Add(token);
-                }
+                    outputTokenTable.Items.Clear();
+                    outputParseResult.Items.Clear();
+                    var codeFragment = inputCodeFragment.Text;
+                    var tokens = lexer.GetTokens(codeFragment);
+                    var variables = lexer.Anilize(codeFragment, tokens);
 
-                foreach (var variable in variables)
+                    foreach (var token in tokens)
+                    {
+                        outputTokenTable.Items.Add(token);
+                    }
+
+                    foreach (var variable in variables)
+                    {
+                        outputParseResult.Items.Add(variable);
+                    }
+
+                    outputError.Text = "";
+                }
+                catch (Exception exc)
                 {
-                    outputParseResult.Items.Add(variable);
+                    outputError.Text = exc.Message;
                 }
-
-                outputError.Content = "";
-            }
-            catch (Exception exc)
-            {
-                outputError.Content = exc.Message;
-            }
-
+            });
         }
     }
 }
