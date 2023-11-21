@@ -24,8 +24,10 @@
                  Grid.Row="1" 
                  Margin="10"
                  Background="FloralWhite"
+                 TextChanged="OnCodeInputTextChanged"
                  AcceptsReturn="True"
                  AcceptsTab="True"
+                 FontSize="17"
                  />
 
         <Grid Grid.Row="2">
