@@ -200,7 +200,7 @@ namespace CSharp_console.Implementations.LexicalParser
                 if (token.TokenType == TokenType.ID)
                 {
                     if (!variables.Any(x => x.ID == token.Text))
-                        throw new ArgumentException($"Unknown variable {token.Text} at {token.Position})");
+                        throw new ArgumentException($"Unknown variable {token.Text} at {token.Position}");
 
                     value =
                         variables.First(x => x.ID == token.Text)
