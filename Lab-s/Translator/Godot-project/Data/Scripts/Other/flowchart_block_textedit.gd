@@ -7,7 +7,7 @@ var _minWidth: int
 var _minHeight: int
 var _font: Font
 
-func _init(maxWidth: int = 250, placeHolderText: String = "Код сюда!", minWidth: int = 100, minHeight: int = 30):
+func _init(maxWidth: int = 250, placeHolderText: String = "Код сюда!", minWidth: int = 60, minHeight: int = 30):
 	_minWidth = minWidth
 	_minHeight = minHeight
 	_maxWidth = maxWidth
