@@ -1,0 +1,87 @@
+[gd_scene load_steps=5 format=3 uid="uid://dyrimchh152eu"]
+
+[ext_resource type="Script" path="res://Data/Scripts/Flowchart editor/flowchat_editor.gd" id="1_jcxut"]
+[ext_resource type="Texture2D" uid="uid://c1wnn3j33tcap" path="res://Data/Assets/Textures/process_flowchart_block_texture.png" id="2_ciakq"]
+
+[sub_resource type="Theme" id="Theme_peal5"]
+
+[sub_resource type="StyleBoxEmpty" id="StyleBoxEmpty_pktgb"]
+
+[node name="Flowchart editor" type="Control"]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+script = ExtResource("1_jcxut")
+
+[node name="MarginContainer" type="MarginContainer" parent="."]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_constants/margin_left = 20
+theme_override_constants/margin_top = 20
+theme_override_constants/margin_right = 20
+theme_override_constants/margin_bottom = 20
+
+[node name="CanvasLayer" type="ScrollContainer" parent="MarginContainer"]
+clip_contents = false
+layout_mode = 2
+
+[node name="CenterContainer" type="CenterContainer" parent="MarginContainer/CanvasLayer"]
+layout_mode = 2
+size_flags_horizontal = 3
+
+[node name="VBoxContainer" type="VBoxContainer" parent="MarginContainer/CanvasLayer/CenterContainer"]
+layout_mode = 2
+
+[node name="CenterContainer" type="MarginContainer" parent="."]
+layout_mode = 1
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -100.0
+offset_top = -65.0
+offset_right = 100.0
+offset_bottom = 65.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="TextureRect" type="TextureRect" parent="CenterContainer"]
+layout_mode = 2
+texture = ExtResource("2_ciakq")
+expand_mode = 2
+
+[node name="Container" type="MarginContainer" parent="CenterContainer"]
+layout_mode = 2
+theme = SubResource("Theme_peal5")
+theme_override_constants/margin_left = 50
+theme_override_constants/margin_top = 50
+theme_override_constants/margin_right = 50
+theme_override_constants/margin_bottom = 50
+
+[node name="TextEdit" type="TextEdit" parent="CenterContainer/Container"]
+visible = false
+custom_minimum_size = Vector2(200, 30)
+layout_mode = 2
+theme_override_styles/normal = SubResource("StyleBoxEmpty_pktgb")
+text = "пять равно 1 плюс 4.
+четыре равно 
+девять равно пять плюс четыре.
+"
+placeholder_text = "Код сюда..."
+wrap_mode = 1
+scroll_fit_content_height = true
+
+[node name="RichTextLabel" type="RichTextLabel" parent="CenterContainer/Container"]
+layout_mode = 2
+focus_mode = 2
+fit_content = true
+threaded = true
+selection_enabled = true
