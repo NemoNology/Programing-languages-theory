@@ -19,6 +19,7 @@ func _init(
 	_minHeight = minHeight
 	_maxWidth = maxWidth
 	custom_minimum_size = Vector2(_minWidth, _minHeight)
+	context_menu_enabled = false
 	scroll_fit_content_height = true
 	placeholder_text = placeHolderText
 	wrap_mode = TextEdit.LINE_WRAPPING_BOUNDARY
