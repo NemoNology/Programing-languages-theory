@@ -4,14 +4,14 @@ extends Node
 # 2) Shape color: Color
 class_name FlowchartBlocksShapes
 
-static var BeginEnd: FlowChartBlockShape
-static var HandInput: FlowChartBlockShape
-static var Output: FlowChartBlockShape
-static var Condition: FlowChartBlockShape
-static var Process: FlowChartBlockShape
+static var BeginEnd: FlowchartBlockShape
+static var HandInput: FlowchartBlockShape
+static var Output: FlowchartBlockShape
+static var Condition: FlowchartBlockShape
+static var Process: FlowchartBlockShape
 
 static func _static_init():
-	BeginEnd = FlowChartBlockShape.new(
+	BeginEnd = FlowchartBlockShape.new(
 		[
 			# left-top
 			Vector2(0, 0.5),
@@ -40,7 +40,7 @@ static func _static_init():
 		],
 		Color.WEB_GREEN
 	)
-	HandInput = FlowChartBlockShape.new(
+	HandInput = FlowchartBlockShape.new(
 		[
 			Vector2.ZERO,
 			Vector2(1, -0.34),
@@ -49,7 +49,7 @@ static func _static_init():
 		],
 		Color.DEEP_SKY_BLUE
 	)
-	Output = FlowChartBlockShape.new(
+	Output = FlowchartBlockShape.new(
 		[
 			Vector2.ZERO,
 			Vector2.RIGHT,
@@ -68,7 +68,7 @@ static func _static_init():
 		],
 		Color.MEDIUM_PURPLE
 	)
-	Condition = FlowChartBlockShape.new(
+	Condition = FlowchartBlockShape.new(
 		[
 			Vector2(-0.25, 0.5),
 			Vector2(0.5, -0.34),
@@ -77,7 +77,7 @@ static func _static_init():
 		],
 		Color.PINK
 	)
-	Process = FlowChartBlockShape.new(
+	Process = FlowchartBlockShape.new(
 		[
 			Vector2.ZERO,
 			Vector2.RIGHT,
