@@ -2,6 +2,7 @@ extends Container
 # Flowchart block is:
 # Block ID: int;
 # Block type: FlowchartBlockType;
+# Code clock: FlowchartBlockTextEdit
 # Next block - then: FlowchartBlock;
 # Next block - else: FlowchartBlock;
 class_name FlowchartBlock
@@ -28,17 +29,12 @@ func _init(
 	_else = elseBlock
 	_input = FlowchartBlockTextEdit.new(_type._startText, _type._placeholderText, isEditable)
 	_input.resized.connect(_on_resized)
-	var idLabel = Label.new()
-	idLabel.self_modulate = Color.BLACK
-	idLabel.text = str(_id)
 	_shape = FlowchartBlockShape.from(_type._shape)
 	add_child(_shape)
-	add_child(idLabel)
 	add_child(_input)
 	set_anchors_preset(PRESET_CENTER)
 	mouse_entered.connect(_on_mouse_entered)
 	mouse_exited.connect(_on_mouse_exited)
-	focus_mode = Control.FOCUS_CLICK
 
 func _on_resized():
 	custom_minimum_size = Vector2(
