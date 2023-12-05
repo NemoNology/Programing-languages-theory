@@ -9,15 +9,12 @@ class_name FlowchartBlockType
 var _shape: FlowchartBlockShape
 var _startText: String
 var _placeholderText: String
-var _bonusCode: Array
 
 func _init(
     shape: FlowchartBlockShape,
     placeholderText: String,
-    bonusCode: Array,
     startText: String = ""
     ):
         _shape = shape
         _placeholderText = placeholderText
         _startText = startText
-        _bonusCode = bonusCode

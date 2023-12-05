@@ -16,32 +16,26 @@ static func _static_init():
 	Begin = FlowchartBlockType.new(
 		FlowchartBlocksShapes.BeginEnd,
 		"",
-		["", ""],
 		"Начало"
 	)
 	End = FlowchartBlockType.new(
 		FlowchartBlocksShapes.BeginEnd,
 		"",
-		["", ""],
 		"Конец"
 	)
 	HandInput = FlowchartBlockType.new(
 		FlowchartBlocksShapes.HandInput,
-		"Ввод ..",
-		["", " ( ) "]
+		"Ввод .."
 	)
 	Output = FlowchartBlockType.new(
 		FlowchartBlocksShapes.Output,
-		"Вывод ..",
-		[" ( ", " ) : "]
+		"Вывод .."
 	)
 	Condition = FlowchartBlockType.new(
 		FlowchartBlocksShapes.Condition,
-		"Условие ..",
-		[" ( ", " ) : "]
+		"Условие .."
 	)
 	Process = FlowchartBlockType.new(
 		FlowchartBlocksShapes.Process,
-		"Код..",
-		["", ""]
+		"Код.."
 	)
