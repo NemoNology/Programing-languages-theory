@@ -9,7 +9,7 @@ class Lexer:
 		pass
 		
 	var word = ""
-	var lexems = {
+	var lexemes = {
 			"вывод": "cout",
 			"ввод": "cin",
 			"будет": "assign",
@@ -38,16 +38,16 @@ class Lexer:
 		
 	func analyze(input, output: ItemList):
 		if input[-1] == " ":
-			# Проверка на вхождение лексемы в список лексем
-			if word in lexems:
-				output.add_item(word + ' ' + lexems[word])
-			# Проверка лексемы на строку
+			# Checking for presence in the list of lexemes
+			if word in lexemes:
+				output.add_item(word + ' ' + lexemes[word])
+			# Checking for a string
 			elif word[0] == '\"' and word[-1] == '\"':
 				output.add_item(word + ' ' + 'string')
-			# Проверка лексемы на число
+			# Checking for a num
 			elif word.is_valid_float() == true:
 				output.add_item(word + ' ' + 'num')
-			# Проверка лексемы на переменную
+			# Checking for a variable
 			else:
 				output.add_item(word + ' ' + 'var')
 			word = ""
