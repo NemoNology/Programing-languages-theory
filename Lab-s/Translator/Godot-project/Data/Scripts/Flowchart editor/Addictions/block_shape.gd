@@ -1,22 +1,31 @@
 extends Line2D
 
-class_name FlowChartBlockShape
+class_name FlowchartBlockShape
 
 var _points: PackedVector2Array
 
 func _init(shapePoints: PackedVector2Array, color: Color):
 	_points = shapePoints
 	default_color = color
-	_on_rect_changed()
-	item_rect_changed.connect(_on_rect_changed)
+	closed = true
 
-func _on_rect_changed():
+static func from(shape: FlowchartBlockShape) -> FlowchartBlockShape:
+	return FlowchartBlockShape.new(shape._points, shape.default_color)
+	
+func _ready():
+	_on_resized()
+	get_parent().resized.connect(_on_resized)
+
+func _on_resized():
 	var parent: Node = get_parent()
 	var newX = parent.size.x
 	var newY = parent.size.y
-	points.clear()
+	var pointsBuffer: PackedVector2Array = []
 	for point in _points:
-		points.append(Vector2(
+		pointsBuffer.append(Vector2(
 			point.x * newX,
 			point.y * newY))
-	draw.emit()
+	points = pointsBuffer
+
+func _draw():
+	draw_polyline(points, default_color, width, antialiased)
