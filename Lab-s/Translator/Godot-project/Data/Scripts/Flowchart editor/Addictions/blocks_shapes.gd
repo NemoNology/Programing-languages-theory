@@ -1,14 +1,17 @@
 extends Node
-class_name FlowchartBlocksShapeTemplate
+# Flowchat block shape template is Array
+# 1) Shape points: PackedVector2Array
+# 2) Shape color: Color
+class_name FlowchartBlocksShapes
 
-static var BeginEnd: Array
-static var HandInput: Array
-static var Output: Array
-static var Condition: Array
-static var Process: Array
+static var BeginEnd: FlowChartBlockShape
+static var HandInput: FlowChartBlockShape
+static var Output: FlowChartBlockShape
+static var Condition: FlowChartBlockShape
+static var Process: FlowChartBlockShape
 
 static func _static_init():
-	BeginEnd = [
+	BeginEnd = FlowChartBlockShape.new(
 		[
 			# left-top
 			Vector2(0, 0.5),
@@ -36,8 +39,8 @@ static func _static_init():
 			Vector2(0.0425, 0.67),
 		],
 		Color.WEB_GREEN
-	]
-	HandInput = [
+	)
+	HandInput = FlowChartBlockShape.new(
 		[
 			Vector2.ZERO,
 			Vector2(1, -0.34),
@@ -45,8 +48,8 @@ static func _static_init():
 			Vector2.DOWN,
 		],
 		Color.DEEP_SKY_BLUE
-	]
-	Output = [
+	)
+	Output = FlowChartBlockShape.new(
 		[
 			Vector2.ZERO,
 			Vector2.RIGHT,
@@ -64,8 +67,8 @@ static func _static_init():
 			Vector2(-0.25, 0.5),
 		],
 		Color.MEDIUM_PURPLE
-	]
-	Condition = [
+	)
+	Condition = FlowChartBlockShape.new(
 		[
 			Vector2(-0.25, 0.5),
 			Vector2(0.5, -0.34),
@@ -73,8 +76,8 @@ static func _static_init():
 			Vector2(0.5, 1.34),
 		],
 		Color.PINK
-	]
-	Process = [
+	)
+	Process = FlowChartBlockShape.new(
 		[
 			Vector2.ZERO,
 			Vector2.RIGHT,
@@ -82,4 +85,4 @@ static func _static_init():
 			Vector2.DOWN,
 		],
 		Color.WHEAT
-	]
+	)
