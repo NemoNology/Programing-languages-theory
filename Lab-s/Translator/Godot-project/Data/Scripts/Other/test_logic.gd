@@ -8,9 +8,7 @@ class Lexer:
 	func _init():
 		pass
 		
-	var word = ''
-	var final_word
-	var last_symbol
+	var word = ""
 	var lexems = {
 			"вывод": "cout",
 			"ввод": "cin",
@@ -38,16 +36,24 @@ class Lexer:
 			"равно": "equals",
 		}
 		
-	func analyze(input, output):
-		last_symbol = input[input.length()-1]
-		if last_symbol != ' ':
-			word += last_symbol
+	func analyze(input, output: ItemList):
+		if input[-1] == " ":
+			# Проверка на вхождение лексемы в список лексем
+			if word in lexems:
+				output.add_item(word + ' ' + lexems[word])
+			# Проверка лексемы на строку
+			elif word[0] == '\"' and word[-1] == '\"':
+				output.add_item(word + ' ' + 'string')
+			# Проверка лексемы на число
+			elif word.is_valid_float() == true:
+				output.add_item(word + ' ' + 'num')
+			# Проверка лексемы на переменную
+			else:
+				output.add_item(word + ' ' + 'var')
+			word = ""
 		else:
-			final_word = word
-			# final_word - конечное слово, проверяем чем оно является
-			word = ''
-			output.add_item(final_word + str(final_word.length()))
-		
+			word += input[-1]
+			
 func _ready():
 	output = get_node("MarginContainer/HBoxContainer/Output")
 	input = get_node("MarginContainer/HBoxContainer/Input")
