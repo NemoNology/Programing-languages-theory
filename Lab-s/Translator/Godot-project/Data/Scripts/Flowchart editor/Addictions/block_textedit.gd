@@ -27,10 +27,14 @@ func _init(
 	add_theme_stylebox_override("focus", emptyStyleBox)
 	add_theme_stylebox_override("read_only", emptyStyleBox)
 	text_changed.connect(_on_text_changed)
-	add_theme_color_override("color", Color.WHITE)
+	self_modulate = Color.BLACK
+	add_theme_color_override("selection_color", Color.LIGHT_GRAY)
 	_font = get_theme_font("font")
 	editable = isEditable
 	text = startText
+	
+func _ready():
+	_on_text_changed()
 	
 func _on_text_changed() -> void:
 	var lineCount = get_line_count()
@@ -58,6 +62,3 @@ func _on_text_changed() -> void:
 		size.y = lineCount * get_line_height()
 		if (sizeBefore != size):
 			resized.emit()
-
-func _ready():
-	_on_text_changed()
