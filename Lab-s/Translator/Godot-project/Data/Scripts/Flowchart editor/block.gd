@@ -1,4 +1,4 @@
-extends Container
+extends GraphNode
 # Flowchart block is:
 # Block ID: int;
 # Block type: FlowchartBlockType;
@@ -7,69 +7,56 @@ extends Container
 # Next block - else: FlowchartBlock;
 class_name FlowchartBlock
 
-var _id: int
-var _type: FlowchartBlockType
-var _input: FlowchartBlockTextEdit
-var _shape: FlowchartBlockShape
-var _then: FlowchartBlock
-var _else: FlowchartBlock
-var _is_dragging: bool
+var id: int
+var type: FlowchartBlockType
+var input: FlowchartBlockTextEdit
+var shape: FlowchartBlockShape
+var thenBlock: FlowchartBlock = null
+var elseBlock: FlowchartBlock = null
 const INPUT_MARGIN = 15
+signal replaced(new_global_position: Vector2)
 
 func _init(
-	id: int,
-	type: FlowchartBlockType,
-	thenBlock: FlowchartBlock,
-	elseBlock: FlowchartBlock = null,
-	isEditable: bool = true
+	block_id: int,
+	block_type: FlowchartBlockType,
+	is_block_input_editable: bool = true
 	):
-	_id = id
-	_type = type
-	_then = thenBlock
-	_else = elseBlock
-	_input = FlowchartBlockTextEdit.new(_type._startText, _type._placeholderText, isEditable)
-	_input.resized.connect(_on_resized)
-	_shape = FlowchartBlockShape.from(_type._shape)
-	add_child(_shape)
-	add_child(_input)
+	id = block_id
+	type = block_type
+	input = FlowchartBlockTextEdit.new(
+		block_type._startText,
+		block_type._placeholderText,
+		is_block_input_editable)
+	shape = FlowchartBlockShape.from(block_type._shape)
+	# var labelID: Label = Label.new()
+	# labelID.text = str(id)
+	# labelID.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+	# labelID.self_modulate = Color.WHITE
+	title = str(id)
+	add_child(shape)
+	add_child(input)
 	set_anchors_preset(PRESET_CENTER)
-	mouse_entered.connect(_on_mouse_entered)
-	mouse_exited.connect(_on_mouse_exited)
+	var titlebarStyleBox = StyleBoxEmpty.new()
+	var titlebarSelectedStyleBox = StyleBoxFlat.new()
+	titlebarSelectedStyleBox.bg_color = shape.default_color
+	add_theme_stylebox_override("titlebar", titlebarStyleBox)
+	add_theme_stylebox_override("titlebar_selected", titlebarSelectedStyleBox)
 
-func _on_resized():
-	custom_minimum_size = Vector2(
-		_input.size.x + INPUT_MARGIN * 2,
-		_input.size.y + INPUT_MARGIN * 2
-	)
+func get_code() -> String:
+	if (type == FlowchartBlocksTypes.HandInput):
+		return input.text + " равно ввод."
+	elif (type == FlowchartBlocksTypes.Output):
+		return "вывод " + input.text + "."
+	elif (type == FlowchartBlocksTypes.Condition):
+		if (thenBlock.thenBlock == self):
+			return "пока ( " + input.text + " ) : "
+		return "если ( " + input.text + " ) : "
+	return input.text
 
 func _draw():
-	_type._shape.draw.emit()
+	shape.draw.emit()
 
 func _ready():
-	_input.position = Vector2(
+	input.position = Vector2(
 		INPUT_MARGIN,
 		INPUT_MARGIN)
-	_on_resized()
-
-
-func _gui_input(event):
-	if (event is InputEventMouseButton):
-		_on_mouse_button(event)
-	elif (event is InputEventMouseMotion):
-		if (_is_dragging):
-			global_position = event.global_position
-
-func _on_mouse_button(event: InputEventMouseButton):
-	if (event.button_index == MOUSE_BUTTON_LEFT):
-		if (event.pressed):
-			_is_dragging = true
-		else:
-			_is_dragging = false
-	elif (event.button_index == MOUSE_BUTTON_RIGHT):
-		pass
-
-func _on_mouse_entered():
-	modulate = Color.LIGHT_GRAY
-
-func _on_mouse_exited():
-	modulate = Color.WHITE
