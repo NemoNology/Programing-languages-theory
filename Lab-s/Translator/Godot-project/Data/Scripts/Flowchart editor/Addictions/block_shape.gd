@@ -10,7 +10,7 @@ func _init(shapePoints: PackedVector2Array, color: Color):
 	closed = true
 	width = 5
 
-static func from(shape: FlowchartBlockShape) -> FlowchartBlockShape:
+static func new_from(shape: FlowchartBlockShape) -> FlowchartBlockShape:
 	return FlowchartBlockShape.new(shape._points, shape.default_color)
 	
 func _ready():
