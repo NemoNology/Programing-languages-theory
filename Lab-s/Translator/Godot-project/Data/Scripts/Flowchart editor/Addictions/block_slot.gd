@@ -6,25 +6,24 @@ const DEFAULT_IN_PORT_COLOR: Color = Color.RED
 const DEFAULT_OUT_PORT_COLOR: Color = Color.BLUE
 const DEFAULT_PORT_TYPE: int = 0
 
-var isLeftPortEnabled: bool
-var isRightPortEnabled: bool
+var isInputPortEnabled: bool
+var isOutputPortEnabled: bool
 
 func _init(
     block_port_text: String,
     is_left_port_enabled: bool = true,
-    is_right_port_enabled: bool = true,
-    text_horizontal_alignment: HorizontalAlignment = HORIZONTAL_ALIGNMENT_FILL,
+    is_right_port_enabled: bool = true
     ):
     text = block_port_text
-    horizontal_alignment = text_horizontal_alignment
     uppercase = true
-    isLeftPortEnabled = is_left_port_enabled
-    isRightPortEnabled = is_right_port_enabled
+    isInputPortEnabled = is_left_port_enabled
+    isOutputPortEnabled = is_right_port_enabled
     autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
+    add_theme_font_size_override("font_size", 8)
 
 static func new_from(flowchart_block_port: FlowchartBlockSlot):
     return FlowchartBlockSlot.new(
         flowchart_block_port.text,
-        flowchart_block_port.isLeftPortEnabled,
-        flowchart_block_port.isRightPortEnabled,
+        flowchart_block_port.isInputPortEnabled,
+        flowchart_block_port.isOutputPortEnabled,
     )
