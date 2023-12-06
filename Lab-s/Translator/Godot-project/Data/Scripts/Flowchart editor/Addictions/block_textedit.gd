@@ -28,7 +28,7 @@ func _init(
 	add_theme_stylebox_override("focus", emptyStyleBox)
 	add_theme_stylebox_override("read_only", emptyStyleBox)
 	text_changed.connect(_on_text_changed)
-	self_modulate = Color.BLACK
+	self_modulate = Color.WHITE
 	add_theme_color_override("selection_color", Color.LIGHT_GRAY)
 	_font = get_theme_font("font")
 	editable = isEditable
