@@ -1,4 +1,10 @@
-[gd_scene format=3 uid="uid://cf7ias2o3ldmh"]
+[gd_scene load_steps=4 format=3 uid="uid://cf7ias2o3ldmh"]
+
+[ext_resource type="Script" path="res://Data/Scripts/Other/main_scene.gd" id="1_5f3e4"]
+[ext_resource type="Script" path="res://Data/Scripts/Flowchart editor/editor.gd" id="2_how57"]
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_3v4yw"]
+bg_color = Color(0.705882, 0.705882, 0.705882, 1)
 
 [node name="Main" type="Control"]
 layout_mode = 3
@@ -7,3 +13,95 @@ anchor_right = 1.0
 anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
+script = ExtResource("1_5f3e4")
+
+[node name="TabContainer" type="TabContainer" parent="."]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_styles/panel = SubResource("StyleBoxFlat_3v4yw")
+
+[node name="Редактор блок-схемы" type="TabBar" parent="TabContainer"]
+layout_mode = 2
+
+[node name="FlowchartEditor" type="GraphEdit" parent="TabContainer/Редактор блок-схемы"]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+script = ExtResource("2_how57")
+
+[node name="Транслятор" type="TabBar" parent="TabContainer"]
+visible = false
+layout_mode = 2
+
+[node name="VBoxContainer" type="VBoxContainer" parent="TabContainer/Транслятор"]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="Important button" type="Button" parent="TabContainer/Транслятор/VBoxContainer"]
+layout_mode = 2
+size_flags_horizontal = 4
+text = "Перевести"
+
+[node name="HBoxContainer" type="HBoxContainer" parent="TabContainer/Транслятор/VBoxContainer"]
+layout_mode = 2
+size_flags_vertical = 3
+theme_override_constants/separation = 20
+
+[node name="Not code" type="VBoxContainer" parent="TabContainer/Транслятор/VBoxContainer/HBoxContainer"]
+layout_mode = 2
+size_flags_horizontal = 3
+
+[node name="Errors" type="VBoxContainer" parent="TabContainer/Транслятор/VBoxContainer/HBoxContainer/Not code"]
+layout_mode = 2
+size_flags_vertical = 3
+
+[node name="Title" type="Label" parent="TabContainer/Транслятор/VBoxContainer/HBoxContainer/Not code/Errors"]
+layout_mode = 2
+text = "Ошибки:"
+
+[node name="Text" type="TextEdit" parent="TabContainer/Транслятор/VBoxContainer/HBoxContainer/Not code/Errors"]
+layout_mode = 2
+size_flags_vertical = 3
+editable = false
+
+[node name="Variables table" type="VBoxContainer" parent="TabContainer/Транслятор/VBoxContainer/HBoxContainer/Not code"]
+layout_mode = 2
+size_flags_vertical = 3
+
+[node name="Title" type="Label" parent="TabContainer/Транслятор/VBoxContainer/HBoxContainer/Not code/Variables table"]
+layout_mode = 2
+text = "Переменные:"
+
+[node name="Text" type="TextEdit" parent="TabContainer/Транслятор/VBoxContainer/HBoxContainer/Not code/Variables table"]
+layout_mode = 2
+size_flags_vertical = 3
+editable = false
+
+[node name="Code" type="VBoxContainer" parent="TabContainer/Транслятор/VBoxContainer/HBoxContainer"]
+layout_mode = 2
+size_flags_horizontal = 3
+
+[node name="Label" type="Label" parent="TabContainer/Транслятор/VBoxContainer/HBoxContainer/Code"]
+layout_mode = 2
+text = "Переведённый код"
+horizontal_alignment = 1
+
+[node name="Text" type="TextEdit" parent="TabContainer/Транслятор/VBoxContainer/HBoxContainer/Code"]
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_vertical = 3
+theme_override_colors/font_readonly_color = Color(1, 1, 1, 1)
+editable = false
+
+[connection signal="pressed" from="TabContainer/Транслятор/VBoxContainer/Important button" to="." method="_on_translate_pressed"]
