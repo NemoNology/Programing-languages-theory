@@ -6,15 +6,21 @@ extends Node
 # 4) Bonus code (see FlowchartBlock "Bonus code" property): Array
 class_name FlowchartBlockType
 
-var _shape: FlowchartBlockShape
-var _startText: String
-var _placeholderText: String
+var shape: FlowchartBlockShape
+var startText: String
+var placeholderText: String
+var tooltipText: String
+var slots: Array
 
 func _init(
-    shape: FlowchartBlockShape,
-    placeholderText: String,
-    startText: String = ""
+    block_shape: FlowchartBlockShape,
+    block_placeholderText: String,
+    block_slots: Array,
+    block_tooltip_text: String,
+    block_startText: String = ""
     ):
-        _shape = shape
-        _placeholderText = placeholderText
-        _startText = startText
+        shape = block_shape
+        placeholderText = block_placeholderText
+        slots = block_slots
+        tooltipText = block_tooltip_text
+        startText = block_startText
