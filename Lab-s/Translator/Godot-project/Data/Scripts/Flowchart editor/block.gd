@@ -2,19 +2,16 @@ extends GraphNode
 # Flowchart block is:
 # Block ID: int;
 # Block type: FlowchartBlockType;
-# Code clock: FlowchartBlockTextEdit
-# Next block - then: FlowchartBlock;
-# Next block - else: FlowchartBlock;
+# Block shape: FlowchartBlockShape
+# Code block: FlowchartBlockTextEdit;
 class_name FlowchartBlock
 
 var id: int
 var type: FlowchartBlockType
 var input: FlowchartBlockTextEdit
 var shape: FlowchartBlockShape
-var thenBlock: FlowchartBlock = null
-var elseBlock: FlowchartBlock = null
-const INPUT_MARGIN = 15
-signal replaced(new_global_position: Vector2)
+
+const CODE_INPUT_BLOCK_MARGIN = 15
 
 func _init(
 	block_id: int,
@@ -24,39 +21,54 @@ func _init(
 	id = block_id
 	type = block_type
 	input = FlowchartBlockTextEdit.new(
-		block_type._startText,
-		block_type._placeholderText,
-		is_block_input_editable)
-	shape = FlowchartBlockShape.from(block_type._shape)
-	# var labelID: Label = Label.new()
-	# labelID.text = str(id)
-	# labelID.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
-	# labelID.self_modulate = Color.WHITE
+		block_type.startText,
+		block_type.placeholderText,
+		is_block_input_editable,
+	)
+	shape = block_type.shape
 	title = str(id)
-	add_child(shape)
+	tooltip_text = block_type.tooltipText
+	input.tooltip_text = tooltip_text
+	resizable = true
 	add_child(input)
 	set_anchors_preset(PRESET_CENTER)
-	var titlebarStyleBox = StyleBoxEmpty.new()
+	var titlebarStyleBox = StyleBoxFlat.new()
 	var titlebarSelectedStyleBox = StyleBoxFlat.new()
+	titlebarStyleBox.bg_color = Color(shape.default_color, 0.5)
 	titlebarSelectedStyleBox.bg_color = shape.default_color
 	add_theme_stylebox_override("titlebar", titlebarStyleBox)
 	add_theme_stylebox_override("titlebar_selected", titlebarSelectedStyleBox)
+	for port_index in range(type.slots.size()):
+		var slot: FlowchartBlockSlot = type.slots[port_index]
+		if (port_index > 0):
+			add_child(FlowchartBlockSlot.new_from(slot))
+		set_slot(
+			port_index,
+			slot.isInputPortEnabled,
+			FlowchartBlockSlot.DEFAULT_PORT_TYPE,
+			FlowchartBlockSlot.DEFAULT_IN_PORT_COLOR,
+			slot.isOutputPortEnabled,
+			FlowchartBlockSlot.DEFAULT_PORT_TYPE,
+			FlowchartBlockSlot.DEFAULT_OUT_PORT_COLOR
+		)
 
-func get_code() -> String:
+# TODO: if there is block shape need see
+
+func get_code(tabulatesCount: int = 0) -> String:
+	var codeBuffer: String
+	codeBuffer = input.text.replace("\n", "\n" + " tab ".repeat(tabulatesCount))
 	if (type == FlowchartBlocksTypes.HandInput):
-		return input.text + " равно ввод."
+		return codeBuffer + " будет ввод."
 	elif (type == FlowchartBlocksTypes.Output):
-		return "вывод " + input.text + "."
-	elif (type == FlowchartBlocksTypes.Condition):
-		if (thenBlock.thenBlock == self):
-			return "пока ( " + input.text + " ) : "
-		return "если ( " + input.text + " ) : "
-	return input.text
-
-func _draw():
-	shape.draw.emit()
+		return "вывод " + codeBuffer + "."
+	elif (type == FlowchartBlocksTypes.ConditionIf):
+		return "если ( " + codeBuffer + " ) : "
+	elif (type == FlowchartBlocksTypes.ConditionWhile):
+		return "пока ( " + codeBuffer + " ) : "
+	return codeBuffer
 
 func _ready():
 	input.position = Vector2(
-		INPUT_MARGIN,
-		INPUT_MARGIN)
+		CODE_INPUT_BLOCK_MARGIN,
+		CODE_INPUT_BLOCK_MARGIN)
+	
