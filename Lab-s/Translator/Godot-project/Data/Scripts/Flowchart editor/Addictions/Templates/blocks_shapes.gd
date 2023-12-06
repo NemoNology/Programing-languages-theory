@@ -13,30 +13,30 @@ static var Process: FlowchartBlockShape
 static func _static_init():
 	BeginEnd = FlowchartBlockShape.new(
 		[
-			# left-top
-			Vector2(0, 0.5),
-			Vector2(0.0425, 0.33),
-			Vector2(0.125, 0.16),
-			Vector2(0.25, 0.075),
-			Vector2(0.375, 0.034),
-			Vector2(0.5, 0),
-			# right-top
-			Vector2(0.625, 0.034),
-			Vector2(0.75, 0.075),
-			Vector2(0.875, 0.16),
-			Vector2(0.9575, 0.33),
-			Vector2(1, 0.5),
-			# right-bottom
-			Vector2(0.9575, 0.67),
-			Vector2(0.875, 0.84),
-			Vector2(0.75, 0.925),
-			Vector2(0.625, 0.966),
-			Vector2(0.5, 1),
-			# left-bottom
-			Vector2(0.375, 0.966),
-			Vector2(0.25, 0.925),
-			Vector2(0.125, 0.84),
-			Vector2(0.0425, 0.67),
+			# left -> top
+			Vector2(-0.25, 0.5),
+			Vector2(-0.1875, 0.17),
+			Vector2(-0.125, 0),
+			Vector2(0, -0.17),
+			Vector2(0.125, -0.255),
+			Vector2(0.5, -0.34),
+			# top -> right
+			Vector2(0.875, -0.255),
+			Vector2(1, -0.17),
+			Vector2(1.125, 0),
+			Vector2(1.1875, 0.17),
+			Vector2(1.25, 0.5),
+			# right -> buttom
+			Vector2(1.1875, 0.83),
+			Vector2(1.125, 1),
+			Vector2(1, 1.17),
+			Vector2(0.875, 1.255),
+			Vector2(0.5, 1.34),
+			# buttom -> left
+			Vector2(0.125, 1.255),
+			Vector2(0, 1.17),
+			Vector2(-0.125, 1),
+			Vector2(-0.1875, 0.83),
 		],
 		Color.WEB_GREEN
 	)
