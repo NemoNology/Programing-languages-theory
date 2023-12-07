@@ -22,7 +22,7 @@ func _init():
 	right_disconnects = true
 
 func _on_toolMenu_id_pressed(id: int):
-	if (id < 5):
+	if (id <  toolMenu.item_count - 1):
 		var buffer: FlowchartBlock
 		match id:
 			0: buffer = FlowchartBlock.new(
@@ -40,10 +40,13 @@ func _on_toolMenu_id_pressed(id: int):
 			4: buffer = FlowchartBlock.new(
 				blocksAmount,
 				FlowchartBlocksTypes.ConditionWhile)
+			5: buffer = FlowchartBlock.new(
+				blocksAmount,
+				FlowchartBlocksTypes.EndCondition) 
 		buffer.position_offset = toolMenu.position
 		blocksAmount += 1
 		add_child(buffer)
-	elif (id == 5):
+	elif (id == toolMenu.item_count - 1):
 		var childIndex: int = 0
 		while childIndex < get_child_count():
 			var childBuffer = get_child(childIndex)
@@ -58,13 +61,12 @@ func _on_toolMenu_id_pressed(id: int):
 				childIndex += 1
 	grab_focus()
 
-func check_flowchart() -> PackedStringArray:
+func check_flowchart_blocks_connections() -> PackedStringArray:
 	var errors: PackedStringArray = []
-	var q: Array[Array] = []
-	var cons = get_connection_list()
+	var cons: Array[Dictionary] = get_connection_list()
 	var endBlock: FlowchartBlock = null
 	var beginBlock: FlowchartBlock = null
-	# find begin and end
+	# Find begin and end
 	for child in get_children():
 		if (beginBlock != null and endBlock != null):
 			break
@@ -73,50 +75,35 @@ func check_flowchart() -> PackedStringArray:
 				beginBlock = child
 			elif (child.type == FlowchartBlocksTypes.End):
 				endBlock = child
-	var blockBufferInfo: Array
 	var isThereNextBlock: bool
-	q.push_back([beginBlock, false])
-	# Finding blocks without next block
-	while (q.size() > 0):
-		blockBufferInfo = q.pop_front()
-		isThereNextBlock = false
-		for con in cons:
-			if (con["from_node"] == blockBufferInfo[0].name):
-				isThereNextBlock = true
-				q.push_back(
-					[
-						get_node(NodePath(con["to_node"])),
-						(blockBufferInfo[0].type == FlowchartBlocksTypes.ConditionWhile
-						and con["from_port"] == 0) 
-					])
-		if (not (isThereNextBlock or blockBufferInfo[1])
-			and blockBufferInfo[0] != endBlock
-			):
-			errors.append((
-				"Блок % должен вести к концу алгоритма"
-				% blockBufferInfo[0].id))
-	# Finding blocks without previous block
-	var areTherePreviousBlock
+	var areTherePreviousBlock: bool
+	# Find connections not existing
 	for child in get_children():
 		if (child is FlowchartBlock
 			and child != beginBlock
-			and child != endBlock
-			):
+			and child != endBlock):
+			isThereNextBlock = false
 			areTherePreviousBlock = false
-			for con in cons:
-				if (con["to_node"] == child.name):
-					areTherePreviousBlock = true
+			for con: Dictionary in cons:
+				if (isThereNextBlock and areTherePreviousBlock):
 					break
+				elif (con["from_node"] == child.name):
+					isThereNextBlock = true
+				elif (con["to_node"] == child.name):
+					areTherePreviousBlock = true
+			if (not isThereNextBlock):
+				errors.append((
+					"От блока %s должен быть путь"
+					% child.id))
 			if (not areTherePreviousBlock):
 				errors.append((
-					"К блоку % должен быть путь"
+					"К блоку %s должен быть путь"
 					% child.id))
 
 	return errors
 
-func get_code() -> PackedStringArray:
-	# TODO: this
-	var code: PackedStringArray = []
+func get_code() -> Dictionary:
+	var code: Dictionary = {}
 	var tabulatesCount: int = 0
 	var childAmount = get_child_count()
 	for childIndex in range(childAmount):
@@ -136,7 +123,7 @@ func get_code() -> PackedStringArray:
 					and nextBlockType != FlowchartBlocksTypes.ConditionWhile
 					):
 					tabulatesCount -= 1
-			code.append(child.get_code(tabulatesCount))
+			code[child.id] = child.get_code(tabulatesCount)
 	return code
 
 func _gui_input(event):
@@ -156,7 +143,7 @@ func _gui_input(event):
 					):
 					child.selected = true
 		elif (kc == KEY_X or kc == KEY_DELETE):
-			_on_toolMenu_id_pressed(5)
+			_on_toolMenu_id_pressed(toolMenu.item_count - 1)
 
 func _ready():
 	anchors_preset = PRESET_FULL_RECT
