@@ -11,7 +11,7 @@ static var HandInput: FlowchartBlockType
 static var Output: FlowchartBlockType
 static var ConditionWhile: FlowchartBlockType
 static var ConditionIf: FlowchartBlockType
-static var EndCondition: FlowchartBlockType
+static var ConditionEnd: FlowchartBlockType
 static var Process: FlowchartBlockType
 
 static func _static_init():
@@ -86,19 +86,19 @@ static func _static_init():
 		+ "\nУточнение:\n"
 		+ "Должен заканчиваться блоком конца условия",
 	)
-	EndCondition = FlowchartBlockType.new(
+	ConditionEnd = FlowchartBlockType.new(
 		FlowchartBlocksShapes.Condition,
 		"Конец условия..",
 		[
 			FlowchartBlockSlot.new(),
 		],
-		"Блок окончания условия: здесь содержаться последний\n"
+		"Блок окончания условия: здесь содержиться последний\n"
 		+ "функционал, который будет выполнен в теле блока-условия"
 		+ "\nУточнения:\n"
 		+ "+) Блок-условие - блок условного оператора или блок цикла\n"
-		+ "+) Данным блоком должн заканчиваться блок-условие\n"
+		+ "+) Данным блоком должен заканчиваться любой блок-условие\n"
 		+ "+) В случае окончания блока условного оператора, данным блоком должны\n"
-		+ "заканчиваться как ветвь 'тогда', так и ветвь 'иначе' (если есть)",
+		+ "заканчиваться как ветвь 'тогда', так и ветвь 'иначе' (если она есть)",
 	)
 	Process = FlowchartBlockType.new(
 		FlowchartBlocksShapes.Process,
