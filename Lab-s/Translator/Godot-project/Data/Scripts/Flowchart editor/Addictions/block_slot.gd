@@ -10,7 +10,7 @@ var isInputPortEnabled: bool
 var isOutputPortEnabled: bool
 
 func _init(
-    block_port_text: String,
+    block_port_text: String = "Предыдущий - Следующий",
     is_left_port_enabled: bool = true,
     is_right_port_enabled: bool = true
     ):
