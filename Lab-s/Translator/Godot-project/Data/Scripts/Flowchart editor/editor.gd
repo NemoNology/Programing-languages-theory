@@ -42,7 +42,7 @@ func _on_toolMenu_id_pressed(id: int):
 				FlowchartBlocksTypes.ConditionWhile)
 			5: buffer = FlowchartBlock.new(
 				blocksAmount,
-				FlowchartBlocksTypes.EndCondition) 
+				FlowchartBlocksTypes.ConditionEnd) 
 		buffer.position_offset = toolMenu.position
 		blocksAmount += 1
 		add_child(buffer)
@@ -64,30 +64,32 @@ func _on_toolMenu_id_pressed(id: int):
 func check_flowchart_blocks_connections() -> PackedStringArray:
 	var errors: PackedStringArray = []
 	var cons: Array[Dictionary] = get_connection_list()
-	var endBlock: FlowchartBlock = null
-	var beginBlock: FlowchartBlock = null
-	# Find begin and end
-	for child in get_children():
-		if (beginBlock != null and endBlock != null):
-			break
-		elif (child is FlowchartBlock):
-			if (child.type == FlowchartBlocksTypes.Begin):
-				beginBlock = child
-			elif (child.type == FlowchartBlocksTypes.End):
-				endBlock = child
 	var isThereNextBlock: bool
 	var areTherePreviousBlock: bool
+	var conditionsCheckStack: Array[int] = []
 	# Find connections not existing
+	# and check condition-blocks quiting/exiting/(...?)
 	for child in get_children():
 		if (child is FlowchartBlock
-			and child != beginBlock
-			and child != endBlock):
+			and child.id > 0):
 			isThereNextBlock = false
 			areTherePreviousBlock = false
+			if (child.type == FlowchartBlocksTypes.ConditionIf
+				or child.type == FlowchartBlocksTypes.ConditionWhile
+				):
+				conditionsCheckStack.push_back(child.id)
+			elif (child.type == FlowchartBlocksTypes.ConditionEnd):
+				if (conditionsCheckStack.size() > 0):
+					conditionsCheckStack.pop_back()
+				else: 
+					errors.append((
+						"Блок окончания условия %s является лишним"
+						% child.id))
 			for con: Dictionary in cons:
 				if (isThereNextBlock and areTherePreviousBlock):
 					break
-				elif (con["from_node"] == child.name):
+				elif (con["from_node"] == child.name
+					and con["from_port"] == 0):
 					isThereNextBlock = true
 				elif (con["to_node"] == child.name):
 					areTherePreviousBlock = true
@@ -99,6 +101,10 @@ func check_flowchart_blocks_connections() -> PackedStringArray:
 				errors.append((
 					"К блоку %s должен быть путь"
 					% child.id))
+	for blockID in conditionsCheckStack:
+		errors.append((
+			"Блок условия %s не заканчивается блоком окончания условия"
+			% blockID))
 
 	return errors
 
