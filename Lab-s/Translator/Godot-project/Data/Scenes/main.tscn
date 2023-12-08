@@ -76,13 +76,26 @@ layout_mode = 2
 size_flags_vertical = 3
 editable = false
 
+[node name="Variables" type="VBoxContainer" parent="TabContainer/Переводчик/VBox/HBox/Not code"]
+layout_mode = 2
+size_flags_vertical = 3
+
+[node name="Title" type="Label" parent="TabContainer/Переводчик/VBox/HBox/Not code/Variables"]
+layout_mode = 2
+text = "Переменные:"
+
+[node name="Text" type="TextEdit" parent="TabContainer/Переводчик/VBox/HBox/Not code/Variables"]
+layout_mode = 2
+size_flags_vertical = 3
+editable = false
+
 [node name="AST" type="VBoxContainer" parent="TabContainer/Переводчик/VBox/HBox/Not code"]
 layout_mode = 2
 size_flags_vertical = 3
 
 [node name="Title" type="Label" parent="TabContainer/Переводчик/VBox/HBox/Not code/AST"]
 layout_mode = 2
-text = "Переменные:"
+text = "Абстрактное синтаксичесоке дерево:"
 
 [node name="Text" type="TextEdit" parent="TabContainer/Переводчик/VBox/HBox/Not code/AST"]
 layout_mode = 2
