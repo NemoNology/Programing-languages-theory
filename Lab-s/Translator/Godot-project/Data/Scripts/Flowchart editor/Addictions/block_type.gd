@@ -18,7 +18,7 @@ func _init(
 	block_shape: FlowchartBlockShape,
 	block_placeholderText: String,
 	block_tooltip_text: String,
-	block_slots: Array = [FlowchartBlockSlot.DefautSlot],
+	block_slots: Array[FlowchartBlockSlot] = [FlowchartBlockSlot.DefautSlot],
 	is_flat: bool = false,
 ):
 	shape = block_shape
