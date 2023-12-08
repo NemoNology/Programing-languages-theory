@@ -37,7 +37,7 @@ func _on_tool_menu_id_pressed(id: int):
 			if (
 				child_buffer is FlowchartBlock
 				and child_buffer.selected
-				and not child_buffer.type.flat
+				and not child_buffer.type in [FlowchartBlocksTypes.Begin, FlowchartBlocksTypes.End]
 			):
 				delete_nodes_request.emit([child_buffer.name])
 				remove_child(child_buffer)
@@ -45,9 +45,11 @@ func _on_tool_menu_id_pressed(id: int):
 				child_index += 1
 	elif id == tool_menu.SelectAllBlocksOptionID:
 		for child in get_children():
-			if child is FlowchartBlock and not child.type.flat:
+			if (
+				child is FlowchartBlock
+				and not child.type in [FlowchartBlocksTypes.Begin, FlowchartBlocksTypes.End]
+			):
 				child.selected = true
-	# elif id == tool_menu.SelectAllBlocksOptionID:
 
 	grab_focus()
 
