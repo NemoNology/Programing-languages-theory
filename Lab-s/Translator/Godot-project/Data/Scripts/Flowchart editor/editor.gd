@@ -1,5 +1,4 @@
 extends GraphEdit
-
 class_name FlowchartEditor
 
 var blocks_amount: int = 3
@@ -15,53 +14,49 @@ func _init():
 	add_theme_stylebox_override("panel", panel_style_box)
 	tool_menu = FlowchartToolMenu.new()
 	add_child(tool_menu)
-	tool_menu.id_pressed.connect(on_tool_menu_id_pressed)
-	connection_request.connect(on_connection_requested)
-	disconnection_request.connect(on_disconnection_requested)
-	connection_to_empty.connect(on_connected_to_empty)
-	delete_nodes_request.connect(on_delete_nodes_requested)
+	tool_menu.id_pressed.connect(_on_tool_menu_id_pressed)
+	connection_request.connect(_on_connection_requested)
+	disconnection_request.connect(_on_disconnection_requested)
+	connection_to_empty.connect(_on_connected_to_empty)
+	delete_nodes_request.connect(_on_delete_nodes_requested)
 	right_disconnects = true
 
 
-func on_tool_menu_id_pressed(id: int):
-	if id < tool_menu.item_count - 1:
-		var buffer: FlowchartBlock
-		match id:
-			0:
-				buffer = FlowchartBlock.new(blocks_amount, FlowchartBlocksTypes.Process)
-			1:
-				buffer = FlowchartBlock.new(blocks_amount, FlowchartBlocksTypes.HandInput)
-			2:
-				buffer = FlowchartBlock.new(blocks_amount, FlowchartBlocksTypes.Output)
-			3:
-				buffer = FlowchartBlock.new(blocks_amount, FlowchartBlocksTypes.ConditionIf)
-			4:
-				buffer = FlowchartBlock.new(blocks_amount, FlowchartBlocksTypes.ConditionWhile)
-			5:
-				buffer = FlowchartBlock.new(blocks_amount, FlowchartBlocksTypes.ConditionEnd)
+func _on_tool_menu_id_pressed(id: int):
+	if id in tool_menu.AddingBlockTypeByOptionID:
+		var buffer: FlowchartBlock = FlowchartBlock.new(
+			blocks_amount, tool_menu.AddingBlockTypeByOptionID[id]
+		)
 		buffer.position_offset = tool_menu.position
 		blocks_amount += 1
 		add_child(buffer)
-	elif id == tool_menu.item_count - 1:
+	elif id == tool_menu.DeleteSelectedBlocksOptionID:
 		var child_index: int = 0
 		while child_index < get_child_count():
 			var child_buffer = get_child(child_index)
 			if (
 				child_buffer is FlowchartBlock
 				and child_buffer.selected
-				and child_buffer.input.editable
+				and not child_buffer.type.flat
 			):
 				delete_nodes_request.emit([child_buffer.name])
 				remove_child(child_buffer)
 			else:
 				child_index += 1
+	elif id == tool_menu.SelectAllBlocksOptionID:
+		for child in get_children():
+			if child is FlowchartBlock and not child.type.flat:
+				child.selected = true
+	# elif id == tool_menu.SelectAllBlocksOptionID:
+
 	grab_focus()
 
 
-# Flowchart blocks checking
-# Check blocks connections
-# Check condition blocks closing by condition end blocks
-# Check empty blocks
+## Flowchart blocks checking:
+## -) Check blocks connections;
+## -) Check condition blocks closing by condition end blocks;
+## -) Check empty blocks;
+## Returns: errors array
 func check_flowchart_blocks() -> PackedStringArray:
 	var errors: PackedStringArray = []
 	var cons: Array[Dictionary] = get_connection_list()
@@ -96,15 +91,7 @@ func check_flowchart_blocks() -> PackedStringArray:
 							is_condition_block
 							and (to_node_type == FlowchartBlocksTypes.ConditionEnd)
 						):
-							(
-								errors
-								. append(
-									(
-										"Блок условия %s не содержит тела (и сразу же закрывается блоком конца условия)"
-										% child.id
-									)
-								)
-							)
+							errors.append("Блок условия %s не содержит тела" % child.id)
 						elif (
 							child.type == FlowchartBlocksTypes.Begin
 							and to_node_type == FlowchartBlocksTypes.End
@@ -116,14 +103,8 @@ func check_flowchart_blocks() -> PackedStringArray:
 							and (to_node_type == FlowchartBlocksTypes.ConditionEnd)
 						):
 							conditions_starts.push_back(child.id)
-							(
-								errors
-								. append(
-									(
-										"Тело (ветвь) \'иначе\' блока условия %s является пустым (и сразу же закрывается блоком конца условия)"
-										% child.id
-									)
-								)
+							errors.append(
+								"Тело \'иначе\' блока условия %s является пустым" % child.id
 							)
 				is_there_previous_block = con["to_node"] == child.name or is_there_previous_block
 			if not is_there_next_block:
@@ -145,6 +126,7 @@ func check_flowchart_blocks() -> PackedStringArray:
 	return errors
 
 
+## Return flowchart full code
 func get_code() -> Dictionary:
 	var code: Dictionary = {}
 	var tabulates_count: int = 0
@@ -201,13 +183,10 @@ func _gui_input(event):
 				tool_menu.position = event.global_position
 				tool_menu.show()
 	elif event is InputEventKey:
-		var kc: Key = event.keycode
-		if kc == KEY_A:
-			for child in get_children():
-				if child is FlowchartBlock and child.input.editable:
-					child.selected = true
-		elif kc == KEY_X or kc == KEY_DELETE:
-			on_tool_menu_id_pressed(tool_menu.item_count - 1)
+		if event.keycode in [KEY_X, KEY_DELETE]:
+			_on_tool_menu_id_pressed(tool_menu.DeleteSelectedBlocksOptionID)
+		elif event.keycode == KEY_A:
+			_on_tool_menu_id_pressed(tool_menu.SelectAllBlocksOptionID)
 
 
 func _ready():
@@ -220,7 +199,7 @@ func _ready():
 	add_child(end_block)
 
 
-func on_connection_requested(
+func _on_connection_requested(
 	from_node: StringName, from_port: int, to_node: StringName, to_port: int
 ):
 	if from_node != to_node:
@@ -235,7 +214,7 @@ func on_connection_requested(
 		)
 
 
-func on_disconnection_requested(
+func _on_disconnection_requested(
 	from_node: StringName, from_port: int, to_node: StringName, to_port: int
 ):
 	disconnect_node(
@@ -246,7 +225,7 @@ func on_disconnection_requested(
 	)
 
 
-func on_connected_to_empty(from_node: StringName, from_port: int, release_position: Vector2):
+func _on_connected_to_empty(from_node: StringName, from_port: int, release_position: Vector2):
 	for con in get_connection_list():
 		if con["from_node"] == from_node and con["from_port"] == from_port:
 			disconnect_node(
@@ -257,7 +236,7 @@ func on_connected_to_empty(from_node: StringName, from_port: int, release_positi
 			)
 
 
-func on_delete_nodes_requested(nodes: Array):
+func _on_delete_nodes_requested(nodes: Array):
 	for node in nodes:
 		for con in get_connection_list():
 			if con["from_node"] == node or con["to_node"] == node:
