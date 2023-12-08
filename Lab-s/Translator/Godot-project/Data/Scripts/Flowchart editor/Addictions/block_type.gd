@@ -10,6 +10,7 @@ var shape: FlowchartBlockShape
 var startText: String
 var placeholderText: String
 var tooltipText: String
+var flat: bool
 var slots: Array
 
 func _init(
@@ -17,10 +18,10 @@ func _init(
     block_placeholderText: String,
     block_slots: Array,
     block_tooltip_text: String,
-    block_startText: String = ""
+    is_flat: bool = false
     ):
         shape = block_shape
         placeholderText = block_placeholderText
         slots = block_slots
         tooltipText = block_tooltip_text
-        startText = block_startText
+        flat = is_flat
