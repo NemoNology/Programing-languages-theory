@@ -1,8 +1,5 @@
 extends Node
-# Flowchart block types templates (see FlowchartBlockType)  is Array:
-# 1) Flowchart block shape: FlowchartBlockShape
-# 2) Placeholder text: String
-# 3) Bonus code (see FlowchartBlock "Bonus code" property): Array
+# Flowchart blocks types templates
 class_name FlowchartBlocksTypes
 
 static var Begin: FlowchartBlockType
