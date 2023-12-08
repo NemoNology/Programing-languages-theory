@@ -43,7 +43,11 @@ func _init(block_id: int, block_type: FlowchartBlockType):
 	for port_index in range(type.slots.size()):
 		var slot: FlowchartBlockSlot = type.slots[port_index]
 		if port_index > 0:
-			add_child(FlowchartBlockSlot.new_from(slot))
+			var label_buffer: Label = Label.new()
+			label_buffer.add_theme_font_size_override("font_size", 8)
+			label_buffer.text = slot.text
+			label_buffer.uppercase = true
+			add_child(label_buffer)
 		set_slot(
 			port_index,
 			slot.input_port_enabled,
