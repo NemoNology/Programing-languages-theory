@@ -1,19 +1,22 @@
-extends Line2D
-
+extends Node2D
+# Flowchart block shape is:
+# 1) Points template: PackedVector2Array
+# 2) Color: Color
+# 3) Points: PackedVector2Array
 class_name FlowchartBlockShape
 
-var _points: PackedVector2Array
+var points_template: PackedVector2Array
+var color: Color
+var points: PackedVector2Array
 
 
-func _init(shapePoints: PackedVector2Array, color: Color):
-	_points = shapePoints
-	default_color = color
-	closed = true
-	width = 5
+func _init(shape_points_template: PackedVector2Array, shape_color: Color):
+	points_template = shape_points_template
+	color = shape_color
 
 
-static func new_from(shape: FlowchartBlockShape) -> FlowchartBlockShape:
-	return FlowchartBlockShape.new(shape._points, shape.default_color)
+func new_copy() -> FlowchartBlockShape:
+	return FlowchartBlockShape.new(points, color)
 
 
 func _ready():
@@ -23,13 +26,13 @@ func _ready():
 
 func _on_resized():
 	var parent: Node = get_parent()
-	var newX = parent.size.x
-	var newY = parent.size.y
-	var pointsBuffer: PackedVector2Array = []
-	for point in _points:
-		pointsBuffer.append(Vector2(point.x * newX, point.y * newY))
-	points = pointsBuffer
+	var width = parent.size.width
+	var height = parent.size.y
+	var points_buffer: PackedVector2Array = []
+	for point in points_template:
+		points_buffer.append(Vector2(point.x * width, point.y * height))
+	points = points_buffer
 
 
 func _draw():
-	draw_polyline(points, default_color, width, antialiased)
+	draw_polyline(points, color, 4, true)
