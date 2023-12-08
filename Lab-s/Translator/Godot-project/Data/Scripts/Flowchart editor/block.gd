@@ -36,8 +36,8 @@ func _init(block_id: int, block_type: FlowchartBlockType):
 	set_anchors_preset(PRESET_CENTER)
 	var titlebarStyleBox = StyleBoxFlat.new()
 	var titlebarSelectedStyleBox = StyleBoxFlat.new()
-	titlebarStyleBox.bg_color = Color(shape.default_color, 0.5)
-	titlebarSelectedStyleBox.bg_color = shape.default_color
+	titlebarStyleBox.bg_color = Color(shape.color, 0.5)
+	titlebarSelectedStyleBox.bg_color = shape.color
 	add_theme_stylebox_override("titlebar", titlebarStyleBox)
 	add_theme_stylebox_override("titlebar_selected", titlebarSelectedStyleBox)
 	for port_index in range(type.slots.size()):
