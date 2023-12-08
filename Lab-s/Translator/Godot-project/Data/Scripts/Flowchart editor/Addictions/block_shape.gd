@@ -16,7 +16,7 @@ func _init(shape_points_template: PackedVector2Array, shape_color: Color):
 
 
 func new_copy() -> FlowchartBlockShape:
-	return FlowchartBlockShape.new(points, color)
+	return FlowchartBlockShape.new(points_template, color)
 
 
 func _ready():
@@ -26,12 +26,14 @@ func _ready():
 
 func _on_resized():
 	var parent: Node = get_parent()
-	var width = parent.size.width
+	var width = parent.size.x
 	var height = parent.size.y
 	var points_buffer: PackedVector2Array = []
 	for point in points_template:
 		points_buffer.append(Vector2(point.x * width, point.y * height))
 	points = points_buffer
+	if (points.size() > 0):
+		points.append(points[0])
 
 
 func _draw():
