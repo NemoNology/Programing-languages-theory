@@ -34,12 +34,12 @@ func _init(block_id: int, block_type: FlowchartBlockType):
 	input.tooltip_text = tooltip_text
 	add_child(input)
 	set_anchors_preset(PRESET_CENTER)
-	var titlebarStyleBox = StyleBoxFlat.new()
-	var titlebarSelectedStyleBox = StyleBoxFlat.new()
-	titlebarStyleBox.bg_color = Color(shape.color, 0.5)
-	titlebarSelectedStyleBox.bg_color = shape.color
-	add_theme_stylebox_override("titlebar", titlebarStyleBox)
-	add_theme_stylebox_override("titlebar_selected", titlebarSelectedStyleBox)
+	var titlebar_style_box = StyleBoxFlat.new()
+	var titlebar_selected_style_box = StyleBoxFlat.new()
+	titlebar_style_box.bg_color = Color(shape.color, 0.5)
+	titlebar_selected_style_box.bg_color = shape.color
+	add_theme_stylebox_override("titlebar", titlebar_style_box)
+	add_theme_stylebox_override("titlebar_selected", titlebar_selected_style_box)
 	for port_index in range(type.slots.size()):
 		var slot: FlowchartBlockSlot = type.slots[port_index]
 		if port_index > 0:
