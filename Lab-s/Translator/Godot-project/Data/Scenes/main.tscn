@@ -34,13 +34,14 @@ anchor_right = 1.0
 anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
+scroll_offset = Vector2(0, -31)
 script = ExtResource("2_how57")
 
-[node name="Транслятор" type="TabBar" parent="TabContainer"]
+[node name="Переводчик" type="TabBar" parent="TabContainer"]
 visible = false
 layout_mode = 2
 
-[node name="VBoxContainer" type="VBoxContainer" parent="TabContainer/Транслятор"]
+[node name="VBox" type="VBoxContainer" parent="TabContainer/Переводчик"]
 layout_mode = 1
 anchors_preset = 15
 anchor_right = 1.0
@@ -48,60 +49,60 @@ anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
 
-[node name="Important button" type="Button" parent="TabContainer/Транслятор/VBoxContainer"]
+[node name="TranslateButton" type="Button" parent="TabContainer/Переводчик/VBox"]
 layout_mode = 2
 size_flags_horizontal = 4
 text = "Перевести"
 
-[node name="HBoxContainer" type="HBoxContainer" parent="TabContainer/Транслятор/VBoxContainer"]
+[node name="HBox" type="HBoxContainer" parent="TabContainer/Переводчик/VBox"]
 layout_mode = 2
 size_flags_vertical = 3
 theme_override_constants/separation = 20
 
-[node name="Not code" type="VBoxContainer" parent="TabContainer/Транслятор/VBoxContainer/HBoxContainer"]
+[node name="Not code" type="VBoxContainer" parent="TabContainer/Переводчик/VBox/HBox"]
 layout_mode = 2
 size_flags_horizontal = 3
 
-[node name="Errors" type="VBoxContainer" parent="TabContainer/Транслятор/VBoxContainer/HBoxContainer/Not code"]
+[node name="Errors" type="VBoxContainer" parent="TabContainer/Переводчик/VBox/HBox/Not code"]
 layout_mode = 2
 size_flags_vertical = 3
 
-[node name="Title" type="Label" parent="TabContainer/Транслятор/VBoxContainer/HBoxContainer/Not code/Errors"]
+[node name="Title" type="Label" parent="TabContainer/Переводчик/VBox/HBox/Not code/Errors"]
 layout_mode = 2
 text = "Ошибки:"
 
-[node name="Text" type="TextEdit" parent="TabContainer/Транслятор/VBoxContainer/HBoxContainer/Not code/Errors"]
+[node name="Text" type="TextEdit" parent="TabContainer/Переводчик/VBox/HBox/Not code/Errors"]
 layout_mode = 2
 size_flags_vertical = 3
 editable = false
 
-[node name="Variables table" type="VBoxContainer" parent="TabContainer/Транслятор/VBoxContainer/HBoxContainer/Not code"]
+[node name="AST" type="VBoxContainer" parent="TabContainer/Переводчик/VBox/HBox/Not code"]
 layout_mode = 2
 size_flags_vertical = 3
 
-[node name="Title" type="Label" parent="TabContainer/Транслятор/VBoxContainer/HBoxContainer/Not code/Variables table"]
+[node name="Title" type="Label" parent="TabContainer/Переводчик/VBox/HBox/Not code/AST"]
 layout_mode = 2
 text = "Переменные:"
 
-[node name="Text" type="TextEdit" parent="TabContainer/Транслятор/VBoxContainer/HBoxContainer/Not code/Variables table"]
+[node name="Text" type="TextEdit" parent="TabContainer/Переводчик/VBox/HBox/Not code/AST"]
 layout_mode = 2
 size_flags_vertical = 3
 editable = false
 
-[node name="Code" type="VBoxContainer" parent="TabContainer/Транслятор/VBoxContainer/HBoxContainer"]
+[node name="Code" type="VBoxContainer" parent="TabContainer/Переводчик/VBox/HBox"]
 layout_mode = 2
 size_flags_horizontal = 3
 
-[node name="Label" type="Label" parent="TabContainer/Транслятор/VBoxContainer/HBoxContainer/Code"]
+[node name="Label" type="Label" parent="TabContainer/Переводчик/VBox/HBox/Code"]
 layout_mode = 2
 text = "Переведённый код"
 horizontal_alignment = 1
 
-[node name="Text" type="TextEdit" parent="TabContainer/Транслятор/VBoxContainer/HBoxContainer/Code"]
+[node name="Text" type="TextEdit" parent="TabContainer/Переводчик/VBox/HBox/Code"]
 layout_mode = 2
 size_flags_horizontal = 3
 size_flags_vertical = 3
 theme_override_colors/font_readonly_color = Color(1, 1, 1, 1)
 editable = false
 
-[connection signal="pressed" from="TabContainer/Транслятор/VBoxContainer/Important button" to="." method="_on_translate_pressed"]
+[connection signal="pressed" from="TabContainer/Переводчик/VBox/TranslateButton" to="." method="_on_translate_pressed"]
