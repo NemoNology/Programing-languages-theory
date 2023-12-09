@@ -24,4 +24,3 @@ func _init():
 	add_separator()
 	add_item("Выделить все блоки")
 	add_item("Удалить выделенные блоки")
-	add_separator()
