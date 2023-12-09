@@ -36,8 +36,8 @@ class Lexer:
 			"равно": "equals",
 		}
 		
-	func analyze(input, output: ItemList):
-		if input[-1] == " ":
+	func analyze(input: String, output: ItemList):
+		if not input.is_empty() and input[-1] == " ":
 			# Checking for presence in the list of lexemes
 			if word in lexemes:
 				output.add_item(word + ' ' + lexemes[word])
