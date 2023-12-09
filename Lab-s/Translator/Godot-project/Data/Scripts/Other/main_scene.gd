@@ -28,5 +28,4 @@ func _on_translate_pressed():
 	errors_output.text = "Ошибок не найдено..."
 	var code: Dictionary = flowchart_editor.get_code()
 	for block_id in code:
-		if not code[block_id].match("^\\s*$"):
-			code_output.text += code[block_id] + "\n"
+		code_output.text += code[block_id] + "\n"
