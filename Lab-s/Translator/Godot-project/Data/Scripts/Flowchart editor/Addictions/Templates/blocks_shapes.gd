@@ -52,7 +52,7 @@ static func _static_init():
 				Vector2.ONE,
 				Vector2.DOWN,
 			],
-			Color.RED,
+			Color.ORANGE_RED,
 		)
 	)
 	Output = (
@@ -74,7 +74,7 @@ static func _static_init():
 				# Triangled left side
 				Vector2(-0.25, 0.5),
 			],
-			Color.BLUE,
+			Color.ROYAL_BLUE,
 		)
 	)
 	ConditionStart = (
@@ -92,8 +92,13 @@ static func _static_init():
 	ConditionEnd = (
 		FlowchartBlockShape
 		. new(
-			[],
-			Color.REBECCA_PURPLE,
+			[
+				Vector2.ZERO,
+				Vector2.RIGHT,
+				Vector2.ONE,
+				Vector2.DOWN,
+			],
+			Color.MEDIUM_PURPLE,
 		)
 	)
 	Process = (
@@ -105,6 +110,6 @@ static func _static_init():
 				Vector2.ONE,
 				Vector2.DOWN,
 			],
-			Color.LIGHT_SLATE_GRAY,
+			Color.DIM_GRAY,
 		)
 	)
