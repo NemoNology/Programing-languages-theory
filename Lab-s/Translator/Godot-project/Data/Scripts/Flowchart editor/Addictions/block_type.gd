@@ -7,22 +7,22 @@ extends Node
 # 5) Slots: Array[FlowchartBlockSlot]
 class_name FlowchartBlockType
 
+var type_name: String
 var shape: FlowchartBlockShape
-var placeholderText: String
 var tooltipText: String
 var flat: bool
 var slots: Array[FlowchartBlockSlot]
 
 
 func _init(
+	block_type_name: String,
 	block_shape: FlowchartBlockShape,
-	block_placeholderText: String,
 	block_tooltip_text: String,
 	block_slots: Array[FlowchartBlockSlot] = [FlowchartBlockSlot.DefautSlot],
 	is_flat: bool = false,
 ):
+	type_name = block_type_name
 	shape = block_shape
-	placeholderText = block_placeholderText
 	slots = block_slots
 	tooltipText = block_tooltip_text
 	flat = is_flat

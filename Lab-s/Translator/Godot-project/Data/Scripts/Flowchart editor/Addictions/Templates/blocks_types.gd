@@ -16,8 +16,8 @@ static func _static_init():
 	Begin = (
 		FlowchartBlockType
 		. new(
-			FlowchartBlocksShapes.BeginEnd,
 			"Начало",
+			FlowchartBlocksShapes.BeginEnd,
 			"Блок, характерезующий начало алгоритма.",
 			[FlowchartBlockSlot.new(false, true)],
 			true,
@@ -26,8 +26,8 @@ static func _static_init():
 	End = (
 		FlowchartBlockType
 		. new(
-			FlowchartBlocksShapes.BeginEnd,
 			"Конец",
+			FlowchartBlocksShapes.BeginEnd,
 			"Блок, характерезующий конец алгоритма.",
 			[FlowchartBlockSlot.new(true, false)],
 			true,
@@ -36,8 +36,8 @@ static func _static_init():
 	HandInput = (
 		FlowchartBlockType
 		. new(
+			"Ввод",
 			FlowchartBlocksShapes.HandInput,
-			"Ввод ..",
 			(
 				"Блок консольного ввода: значение выражения\n"
 				+ "указанного внутри блока, будет считано из консольного ввода."
@@ -47,8 +47,8 @@ static func _static_init():
 	Output = (
 		FlowchartBlockType
 		. new(
+			"Вывод",
 			FlowchartBlocksShapes.Output,
-			"Вывод ..",
 			(
 				"Блок консольного вывода: выражение,"
 				+ "указанное внутри блока, будет выведено в консоль."
@@ -58,8 +58,8 @@ static func _static_init():
 	ConditionIf = (
 		FlowchartBlockType
 		. new(
+			"Условный оператор",
 			FlowchartBlocksShapes.ConditionStart,
-			"Если ..",
 			(
 				"Блок условного оператора:\n"
 				+ "Верхний выход блока - тело \'тогда\' - многоблочное\n"
@@ -79,8 +79,8 @@ static func _static_init():
 	ConditionWhile = (
 		FlowchartBlockType
 		. new(
+			"Цикл",
 			FlowchartBlocksShapes.ConditionStart,
-			"Пока ..",
 			(
 				"Блок цикла.\n"
 				+ "Уточнения:\n"
@@ -92,8 +92,8 @@ static func _static_init():
 	ConditionEnd = (
 		FlowchartBlockType
 		. new(
+			"Конец блока\nусловия",
 			FlowchartBlocksShapes.ConditionEnd,
-			"Конец условия",
 			(
 				"Блок окончания условия: этим блоком должно\n"
 				+ "оканчиваться каждое тела блока условия.\n"
@@ -109,8 +109,8 @@ static func _static_init():
 	Process = (
 		FlowchartBlockType
 		. new(
+			"Процесс",
 			FlowchartBlocksShapes.Process,
-			"Код..",
 			(
 				"Блок процесса: содержимое блока -\n"
 				+ "функция обработки данных любого вида\n"
