@@ -6,13 +6,16 @@ extends Node2D
 class_name FlowchartBlockShape
 
 var points_template: PackedVector2Array
+var default_color: Color
 var color: Color
 var points: PackedVector2Array
 
-
 func _init(shape_points_template: PackedVector2Array, shape_color: Color):
 	points_template = shape_points_template
+	default_color = shape_color
 	color = shape_color
+	show_behind_parent = true
+	set_process_input(false)
 
 
 func new_copy() -> FlowchartBlockShape:
@@ -20,21 +23,24 @@ func new_copy() -> FlowchartBlockShape:
 
 
 func _ready():
-	_on_resized()
-	get_parent().resized.connect(_on_resized)
+	_on_parent_resized()
 
 
-func _on_resized():
+func _on_parent_resized():
 	var parent: Node = get_parent()
+	if (parent == null):
+		return
 	var width = parent.size.x
 	var height = parent.size.y
 	var points_buffer: PackedVector2Array = []
 	for point in points_template:
 		points_buffer.append(Vector2(point.x * width, point.y * height))
 	points = points_buffer
-	if (points.size() > 0):
+	if points.size() > 0:
 		points.append(points[0])
+	draw.emit()
 
 
 func _draw():
+	_on_parent_resized()
 	draw_polyline(points, color, 4, true)
