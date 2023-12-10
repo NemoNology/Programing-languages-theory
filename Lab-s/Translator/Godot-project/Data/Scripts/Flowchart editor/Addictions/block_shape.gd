@@ -10,6 +10,7 @@ var default_color: Color
 var color: Color
 var points: PackedVector2Array
 
+
 func _init(shape_points_template: PackedVector2Array, shape_color: Color):
 	points_template = shape_points_template
 	default_color = shape_color
@@ -28,7 +29,7 @@ func _ready():
 
 func _on_parent_resized():
 	var parent: Node = get_parent()
-	if (parent == null):
+	if parent == null:
 		return
 	var width = parent.size.x
 	var height = parent.size.y
