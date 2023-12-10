@@ -26,6 +26,6 @@ func _on_translate_pressed():
 			errors_output.text += er + "\n"
 		return
 	errors_output.text = "Ошибок не найдено..."
-	var code: Dictionary = flowchart_editor.get_code()
-	for block_id in code:
-		code_output.text += code[block_id] + "\n"
+	var blocks_codes: Array[FLowchartBlockCode] = flowchart_editor.get_block_codes()
+	for block in blocks_codes:
+		code_output.text += block.to_string() + "\n"
