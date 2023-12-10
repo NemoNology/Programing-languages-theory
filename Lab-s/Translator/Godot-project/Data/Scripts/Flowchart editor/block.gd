@@ -10,7 +10,7 @@ var id: int
 var type: FlowchartBlockType
 var input: FlowchartBlockTextEdit
 var shape: FlowchartBlockShape
-var _is_else_block: bool
+var is_else_block: bool = false
 
 const CODE_INPUT_BLOCK_MARGIN = 10
 
@@ -73,23 +73,21 @@ func _init(block_id: int, block_type: FlowchartBlockType):
 
 func get_code() -> String:
 	# TODO: change getting adding code from lexeme types templates
+	var code_buffer: String
 	if type == FlowchartBlocksTypes.HandInput:
-		return input.text + " будет ввод. "
+		code_buffer = input.text + " будет ввод. "
 	elif type == FlowchartBlocksTypes.Output:
-		return " вывод " + input.text + " ."
+		code_buffer = " вывод " + input.text + " ."
 	elif type == FlowchartBlocksTypes.ConditionIf:
-		return " если ( " + input.text + " ) . "
+		code_buffer = " если ( " + input.text + " ) . "
 	elif type == FlowchartBlocksTypes.ConditionWhile:
-		return " пока ( " + input.text + " ) . "
+		code_buffer = " пока ( " + input.text + " ) . "
 	elif type == FlowchartBlocksTypes.ConditionEnd:
 		return " конец. "
-	elif _is_else_block:
-		return " иначе. \n" + input.text
-	return input.text
-
-
-func set_is_else_block(new_is_else_block_value: bool) -> void:
-	_is_else_block = new_is_else_block_value
+	
+	if is_else_block:
+		return " иначе. \n" + code_buffer
+	return code_buffer
 
 
 func _ready():
@@ -110,4 +108,4 @@ func _draw():
 
 
 func _to_string():
-	return "%s: %s (Is else: %s)" % [id, type.to_string(), _is_else_block]
+	return "%s: %s (Is else: %s)" % [id, type.to_string(), is_else_block]
