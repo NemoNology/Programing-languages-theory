@@ -72,21 +72,23 @@ func _init(block_id: int, block_type: FlowchartBlockType):
 
 
 func get_code() -> String:
-	# TODO: change getting adding code from lexeme types templates
 	var code_buffer: String
 	if type == FlowchartBlocksTypes.HandInput:
-		code_buffer = input.text + " будет ввод. "
+		code_buffer = (
+			" %s %s %s %s "
+			% [input.text, LexemeTypes.Assign, LexemeTypes.Cin, LexemeTypes.Separatop]
+		)
 	elif type == FlowchartBlocksTypes.Output:
-		code_buffer = " вывод " + input.text + " ."
+		code_buffer = " %s %s %s " % [LexemeTypes.Cout, input.text, LexemeTypes.Separatop]
 	elif type == FlowchartBlocksTypes.ConditionIf:
-		code_buffer = " если ( " + input.text + " ) . "
+		code_buffer = " %s %s %s " % [LexemeTypes.If, input.text, LexemeTypes.Separatop]
 	elif type == FlowchartBlocksTypes.ConditionWhile:
-		code_buffer = " пока ( " + input.text + " ) . "
+		code_buffer = " %s %s %s " % [LexemeTypes.While, input.text, LexemeTypes.Separatop]
 	elif type == FlowchartBlocksTypes.ConditionEnd:
-		return " конец. "
-	
+		return " %s%s " % [LexemeTypes.End, LexemeTypes.Separatop]
+
 	if is_else_block:
-		return " иначе. \n" + code_buffer
+		return " %s%s \n" % [LexemeTypes.Else, LexemeTypes.Separatop, code_buffer]
 	return code_buffer
 
 
