@@ -58,7 +58,7 @@ static func _static_init():
 	ConditionIf = (
 		FlowchartBlockType
 		. new(
-			"Условный оператор",
+			"Условие",
 			FlowchartBlocksShapes.ConditionStart,
 			(
 				"Блок условного оператора:\n"
