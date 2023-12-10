@@ -26,3 +26,7 @@ func _init(
 	slots = block_slots
 	tooltipText = block_tooltip_text
 	flat = is_flat
+
+
+func _to_string():
+	return type_name

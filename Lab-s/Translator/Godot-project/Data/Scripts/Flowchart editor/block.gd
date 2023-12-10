@@ -76,7 +76,7 @@ func get_code() -> String:
 	if type == FlowchartBlocksTypes.HandInput:
 		return input.text + " будет ввод. "
 	elif type == FlowchartBlocksTypes.Output:
-		return " вывод " + input.text + "."
+		return " вывод " + input.text + " ."
 	elif type == FlowchartBlocksTypes.ConditionIf:
 		return " если ( " + input.text + " ) . "
 	elif type == FlowchartBlocksTypes.ConditionWhile:
@@ -107,3 +107,7 @@ func _on_node_deselected():
 
 func _draw():
 	shape.queue_redraw()
+
+
+func _to_string():
+	return "%s: %s (Is else: %s)" % [id, type.to_string(), _is_else_block]
