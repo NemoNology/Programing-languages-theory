@@ -8,18 +8,23 @@ var tool_menu: FlowchartToolMenu
 func _init():
 	show_grid = false
 	snapping_enabled = false
+	right_disconnects = true
 	minimap_size = Vector2(120, 80)
+
 	var panel_style_box: StyleBoxFlat = StyleBoxFlat.new()
-	panel_style_box.bg_color = Color.GRAY
+	panel_style_box.bg_color = Color.from_string("#dfe8e9", Color.WHITE)
 	add_theme_stylebox_override("panel", panel_style_box)
+	add_theme_color_override("grid_minor", Color.GRAY)
+	add_theme_color_override("grid_major", Color.BLACK)
+
 	tool_menu = FlowchartToolMenu.new()
 	add_child(tool_menu)
+
 	tool_menu.id_pressed.connect(_on_tool_menu_id_pressed)
 	connection_request.connect(_on_connection_requested)
 	disconnection_request.connect(_on_disconnection_requested)
 	connection_to_empty.connect(_on_connected_to_empty)
 	delete_nodes_request.connect(_on_delete_nodes_requested)
-	right_disconnects = true
 
 
 func _on_tool_menu_id_pressed(id: int):
@@ -27,7 +32,7 @@ func _on_tool_menu_id_pressed(id: int):
 		var buffer: FlowchartBlock = FlowchartBlock.new(
 			blocks_amount, tool_menu.AddingBlockTypeByOptionID[id]
 		)
-		buffer.position_offset = tool_menu.position
+		buffer.position_offset = Vector2i(Vector2(tool_menu.position) + scroll_offset / zoom)
 		blocks_amount += 1
 		add_child(buffer)
 	elif id == tool_menu.DeleteSelectedBlocksOptionID:
@@ -45,12 +50,8 @@ func _on_tool_menu_id_pressed(id: int):
 				child_index += 1
 	elif id == tool_menu.SelectAllBlocksOptionID:
 		for child in get_children():
-			if (
-				child is FlowchartBlock
-				and not child.type in [FlowchartBlocksTypes.Begin, FlowchartBlocksTypes.End]
-			):
+			if child is FlowchartBlock:
 				child.selected = true
-
 	grab_focus()
 
 
@@ -85,15 +86,15 @@ func check_flowchart_blocks() -> PackedStringArray:
 			for con: Dictionary in cons:
 				if is_there_next_block and is_there_previous_block:
 					break
-				if con["from_node"] == child.name or is_there_next_block:
+				elif con["from_node"] == child.name or is_there_next_block:
 					var to_node_type = get_node(NodePath(con["to_node"])).type
 					if con["from_port"] == 0:
 						is_there_next_block = true
-						if (
-							is_condition_block
-							and (to_node_type == FlowchartBlocksTypes.ConditionEnd)
-						):
-							errors.append("Блок условия %s не содержит тела" % child.id)
+						if is_condition_block:
+							if to_node_type == FlowchartBlocksTypes.ConditionEnd:
+								errors.append("Блок условия %s не содержит тела" % child.id)
+							else:
+								is_condition_block = false
 						elif (
 							child.type == FlowchartBlocksTypes.Begin
 							and to_node_type == FlowchartBlocksTypes.End
@@ -128,52 +129,88 @@ func check_flowchart_blocks() -> PackedStringArray:
 	return errors
 
 
-## Return flowchart full code
-func get_code() -> Dictionary:
-	var code: Dictionary = {}
-	var tabulates_count: int = 0
+## Return flowchart full code -> list of FLowchartBlockCode
+func get_block_codes() -> Array[FLowchartBlockCode]:
+	var blocks_codes: Array[FLowchartBlockCode] = []
 	var branches_queue: Array[FlowchartBlock] = []
+	var conditions_types_stack: Array[bool] = []
+	var cons: Array[Dictionary] = get_connection_list()
 	# Find and starts from begin block
 	for child in get_children():
-		if child is FlowchartBlock and child.type == FlowchartBlocksTypes.Begin:
-			branches_queue.push_back(child)
-			break
+		if child is FlowchartBlock:
+			child.is_else_block = false
+			if child.type == FlowchartBlocksTypes.Begin:
+				for con in cons:
+					if con["from_node"] == child.name:
+						branches_queue.push_back(get_node(NodePath(con["to_node"])))
+
 	# Go on every branch
-	# TODO: code getting
-	var cons: Array[Dictionary] = get_connection_list()
 	while branches_queue.size() > 0:
 		var block_buffer: FlowchartBlock = branches_queue.pop_front()
-		if block_buffer.type == FlowchartBlocksTypes.End:
-			return code
-		for con in cons:
-			if con["from_node"] == block_buffer.name:
-				if block_buffer.type == FlowchartBlocksTypes.ConditionWhile:
-					tabulates_count += 1
-					block_buffer = get_node(NodePath(con["to_node"]))
-				elif block_buffer.type == FlowchartBlocksTypes.ConditionIf:
-					if con["from_port"] == 0:
-						block_buffer = get_node(NodePath(con["to_node"]))
-						# Searching 'else' block
-						for con1 in cons:
-							if con1["from_node"] == con["from_node"] and con1["from_port"] == 1:
-								branches_queue.push_back(get_node(NodePath(con1["to_node"])))
-								break
-					else:
-						branches_queue.push_back(get_node(NodePath(con["to_node"])))
-						# Searching 'then' block
-						for con1 in cons:
-							if con1["from_node"] == con["from_node"] and con1["from_port"] == 0:
-								block_buffer = get_node(NodePath(con1["to_node"]))
-								break
-				elif block_buffer.type == FlowchartBlocksTypes.ConditionEnd:
-					tabulates_count -= 1
-					block_buffer = get_node(NodePath(con["to_node"]))
-				else:
-					block_buffer = get_node(NodePath(con["to_node"]))
-				break
-		code[block_buffer.id] = block_buffer.get_code(tabulates_count)
+		var con_index: int = 0
 
-	return code
+		while con_index < cons.size():
+			var con: Dictionary = cons[con_index]
+
+			if con["from_node"] == block_buffer.name:
+				if block_buffer.type == FlowchartBlocksTypes.End:
+					return blocks_codes
+
+				if block_buffer.type == FlowchartBlocksTypes.ConditionWhile:
+					conditions_types_stack.push_back(false)
+				elif block_buffer.type == FlowchartBlocksTypes.ConditionIf:
+					conditions_types_stack.push_back(true)
+					blocks_codes.append(
+						FLowchartBlockCode.new(block_buffer.id, block_buffer.get_code())
+					)
+					# Searching what's block go next: 'else' or 'then'
+					# If it's 'then' (next block from_port == 0) -> search 'save', push 'save' to branches
+					# If it's 'else' -> push it to branches and switch to 'then' block
+					for con1 in cons:
+						if con1["from_node"] == block_buffer.name:
+							if con1["from_port"] == 0:
+								# Switching to next 'then' block
+								block_buffer = get_node(NodePath(con1["to_node"]))
+							else:
+								# Pushing next 'else' block
+								var block_else: FlowchartBlock = get_node(NodePath(con1["to_node"]))
+								block_else.is_else_block = true
+								branches_queue.push_back(block_else)
+							# Searching another body: 'then' for 'else' or 'else' for 'then'
+							for con2 in cons:
+								if (
+									con2["from_node"] == con1["from_node"]
+									and con2["from_port"] != con1["from_port"]
+								):
+									if con1["from_port"] == 0:
+										# Pushing 'else'
+										var block_else: FlowchartBlock = get_node(
+											NodePath(con2["to_node"])
+										)
+										block_else.is_else_block = true
+										branches_queue.push_back(block_else)
+									else:
+										# Switching to 'then'
+										block_buffer = get_node(NodePath(con2["to_node"]))
+									# We do all we need
+									break
+							break
+					continue
+				elif block_buffer.type == FlowchartBlocksTypes.ConditionEnd:
+					var is_previous_condition_if_block: bool = conditions_types_stack.pop_back()
+					if not branches_queue.is_empty() and is_previous_condition_if_block:
+						conditions_types_stack.push_back(false)
+						break
+	
+				blocks_codes.append(
+					FLowchartBlockCode.new(block_buffer.id, block_buffer.get_code())
+				)
+				block_buffer = get_node(NodePath(con["to_node"]))
+				con_index = 0
+			else:
+				con_index += 1
+
+	return blocks_codes
 
 
 func _gui_input(event):
