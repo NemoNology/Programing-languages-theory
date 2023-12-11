@@ -1,5 +1,3 @@
-extends Object
-
 class_name FlowchartBlockSlot
 
 const DEFAULT_IN_PORT_COLOR: Color = Color.RED

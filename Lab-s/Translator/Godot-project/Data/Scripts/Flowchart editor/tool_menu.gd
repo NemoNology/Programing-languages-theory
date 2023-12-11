@@ -1,6 +1,4 @@
-extends PopupMenu
-
-class_name FlowchartToolMenu
+class_name FlowchartToolMenu extends PopupMenu
 
 ## Dictionary: key - menu option/item ID; Value -
 static var AddingBlockTypeByOptionID: Dictionary = {

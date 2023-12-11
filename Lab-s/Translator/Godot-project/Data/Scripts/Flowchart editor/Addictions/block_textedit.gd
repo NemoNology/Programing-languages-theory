@@ -1,6 +1,4 @@
-extends TextEdit
-
-class_name FlowchartBlockTextEdit
+class_name FlowchartBlockTextEdit extends TextEdit
 
 const DEFAULT_MIN_WIDTH = 80
 const DEFAULT_MIN_HEIGHT = 27

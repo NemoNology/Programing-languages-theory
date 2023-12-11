@@ -1,10 +1,9 @@
-extends GraphNode
 # Flowchart block is:
 # Block ID: int;
 # Block type: FlowchartBlockType;
 # Block shape: FlowchartBlockShape
 # Code block: FlowchartBlockTextEdit;
-class_name FlowchartBlock
+class_name FlowchartBlock extends GraphNode
 
 var id: int
 var type: FlowchartBlockType

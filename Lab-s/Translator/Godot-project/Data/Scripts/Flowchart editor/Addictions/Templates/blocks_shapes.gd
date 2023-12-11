@@ -1,4 +1,3 @@
-extends Node
 # Flowchat blocks shapes templates
 class_name FlowchartBlocksShapes
 

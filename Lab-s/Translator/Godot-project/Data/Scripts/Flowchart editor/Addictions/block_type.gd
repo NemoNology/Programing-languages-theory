@@ -1,4 +1,3 @@
-extends Node
 # Flowchart block type is:
 # 1) Flowchart block shape: FlowchartBlockShape
 # 2) Placeholder text: String

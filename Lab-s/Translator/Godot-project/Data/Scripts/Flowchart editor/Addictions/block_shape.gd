@@ -1,9 +1,8 @@
-extends Node2D
-# Flowchart block shape is:
-# 1) Points template: PackedVector2Array
-# 2) Color: Color
-# 3) Points: PackedVector2Array
-class_name FlowchartBlockShape
+## Flowchart block shape is:
+## 1) Points template: PackedVector2Array
+## 2) Color: Color
+## 3) Points: PackedVector2Array
+class_name FlowchartBlockShape extends Node2D
 
 var points_template: PackedVector2Array
 var default_color: Color

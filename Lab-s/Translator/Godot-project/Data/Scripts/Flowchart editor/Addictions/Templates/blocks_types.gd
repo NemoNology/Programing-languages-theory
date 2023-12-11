@@ -1,5 +1,4 @@
-extends Node
-# Flowchart blocks types templates
+## Flowchart blocks types templates
 class_name FlowchartBlocksTypes
 
 static var Begin: FlowchartBlockType

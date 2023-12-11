@@ -1,5 +1,4 @@
-extends GraphEdit
-class_name FlowchartEditor
+class_name FlowchartEditor extends GraphEdit
 
 var blocks_amount: int = 3
 var tool_menu: FlowchartToolMenu
