@@ -5,12 +5,9 @@ var input: TextEdit
 var lexer = Lexer.new()
 
 
-class Lexer:
-	func _init():
-		pass
-
-	var word = ""
-	var lexemes = {
+class Lexer_test:
+	static var word = ""
+	static var lexemes = {
 		"вывод": "cout",
 		"ввод": "cin",
 		"будет": "assign",
@@ -37,7 +34,9 @@ class Lexer:
 		"равно": "equals",
 	}
 
-	func analyze(input: String, output: ItemList):
+# lexemes.append(Lexeme.new(...))
+
+	static func analyze(input: String, output: ItemList):
 		if input.is_empty():
 			return
 		elif input[-1] == " ":
@@ -64,4 +63,4 @@ func _ready():
 
 
 func _on_input_text_changed():
-	lexer.analyze(input.text, output)
+	Lexer_test.analyze(input.text, output)
