@@ -14,7 +14,12 @@ var is_else_block: bool = false
 const CODE_INPUT_BLOCK_MARGIN = 10
 
 
-func _init(block_id: int, block_type: FlowchartBlockType):
+func _init(
+	block_id: int,
+	block_type: FlowchartBlockType,
+	text: String = "",
+	block_position_offset: Vector2 = Vector2.ZERO
+):
 	id = block_id
 	type = block_type
 	input = (FlowchartBlockTextEdit.new(block_type.flat))
@@ -23,6 +28,7 @@ func _init(block_id: int, block_type: FlowchartBlockType):
 	title = "%s: %s" % [str(id), block_type.type_name]
 	tooltip_text = block_type.tooltipText
 	input.tooltip_text = tooltip_text
+	input.text = text
 	add_child(input)
 
 	var panel_style_box: StyleBox = get_theme_stylebox("panel")
@@ -42,6 +48,7 @@ func _init(block_id: int, block_type: FlowchartBlockType):
 	add_theme_stylebox_override("titlebar_selected", titlebar_selected_style_box)
 	add_theme_stylebox_override("panel", panel_style_box)
 	add_theme_stylebox_override("panel_selected", panel_selected_style_box)
+	position_offset = block_position_offset
 
 	node_selected.connect(_on_node_selected)
 	node_deselected.connect(_on_node_deselected)
@@ -71,23 +78,23 @@ func _init(block_id: int, block_type: FlowchartBlockType):
 
 
 func get_code() -> String:
-	var code_buffer: String
+	var code_buffer: String = input.text
 	if type == FlowchartBlocksTypes.HandInput:
 		code_buffer = (
-			" %s %s %s %s "
+			" %s %s %s%s "
 			% [input.text, LexemeTypes.Assign, LexemeTypes.Cin, LexemeTypes.Separatop]
 		)
 	elif type == FlowchartBlocksTypes.Output:
-		code_buffer = " %s %s %s " % [LexemeTypes.Cout, input.text, LexemeTypes.Separatop]
+		code_buffer = " %s %s%s " % [LexemeTypes.Cout, input.text, LexemeTypes.Separatop]
 	elif type == FlowchartBlocksTypes.ConditionIf:
-		code_buffer = " %s %s %s " % [LexemeTypes.If, input.text, LexemeTypes.Separatop]
+		code_buffer = " %s %s%s " % [LexemeTypes.If, input.text, LexemeTypes.Separatop]
 	elif type == FlowchartBlocksTypes.ConditionWhile:
-		code_buffer = " %s %s %s " % [LexemeTypes.While, input.text, LexemeTypes.Separatop]
+		code_buffer = " %s %s%s " % [LexemeTypes.While, input.text, LexemeTypes.Separatop]
 	elif type == FlowchartBlocksTypes.ConditionEnd:
 		return " %s%s " % [LexemeTypes.End, LexemeTypes.Separatop]
 
 	if is_else_block:
-		return " %s%s \n" % [LexemeTypes.Else, LexemeTypes.Separatop, code_buffer]
+		return " %s%s %s" % [LexemeTypes.Else, LexemeTypes.Separatop, code_buffer]
 	return code_buffer
 
 
@@ -109,4 +116,15 @@ func _draw():
 
 
 func _to_string():
-	return "%s: %s (Is else: %s)" % [id, type.to_string(), is_else_block]
+	return "%s: %s " % [id, type.to_string(), is_else_block]
+
+
+func get_state() -> Dictionary:
+	var state: Dictionary = {}
+	state["id"] = id
+	state["type"] = type.type_name
+	state["text"] = input.text
+	state["position_offset_x"] = position_offset.x
+	state["position_offset_y"] = position_offset.y
+
+	return state
