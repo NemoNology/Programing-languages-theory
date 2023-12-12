@@ -113,13 +113,26 @@ static func _static_init():
 			(
 				"Блок процесса: содержимое блока -\n"
 				+ "функция обработки данных любого вида\n"
-				+ "на условном языке программирования\n."
+				+ "на условном языке программирования.\n"
 				+ "Уточнение:\n"
 				+ "Этот блок может заменить все остальные.\n"
 				+ "Иные типы блоков нужны для лучшего\n"
 				+ "визуального восприятия блок-схемы.\n"
-				+ "Также иные виды блоков позволяют уменьшить количество\n"
-				+ "введённого вручную кода."
+				+ "Также иные виды блоков позволяют уменьшить\n"
+				+ "количество введённого вручную кода."
 			),
 		)
 	)
+
+
+static func from_name(type_name: String) -> FlowchartBlockType:
+	match type_name:
+		Begin.type_name: return Begin
+		End.type_name: return End
+		HandInput.type_name: return HandInput
+		Output.type_name: return Output
+		ConditionWhile.type_name: return ConditionWhile
+		ConditionIf.type_name: return ConditionIf
+		ConditionEnd.type_name: return ConditionEnd
+		Process.type_name: return Process
+	return null
