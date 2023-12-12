@@ -2,6 +2,7 @@ class_name FlowchartEditor extends GraphEdit
 
 var blocks_amount: int = 3
 var tool_menu: FlowchartToolMenu
+var _save_load_handler: FlowchartSaveLoadHandler
 
 
 func _init():
@@ -16,9 +17,12 @@ func _init():
 	add_theme_color_override("grid_minor", Color.GRAY)
 	add_theme_color_override("grid_major", Color.BLACK)
 
+	_save_load_handler = FlowchartSaveLoadHandler.new(self)
 	tool_menu = FlowchartToolMenu.new()
+	add_child(_save_load_handler)
 	add_child(tool_menu)
 
+	_save_load_handler.state_load.connect(_on_state_loaded)
 	tool_menu.id_pressed.connect(_on_tool_menu_id_pressed)
 	connection_request.connect(_on_connection_requested)
 	disconnection_request.connect(_on_disconnection_requested)
@@ -26,12 +30,14 @@ func _init():
 	delete_nodes_request.connect(_on_delete_nodes_requested)
 
 
-func _on_tool_menu_id_pressed(id: int):
+func _on_tool_menu_id_pressed(id: int) -> void:
 	if id in tool_menu.AddingBlockTypeByOptionID:
 		var buffer: FlowchartBlock = FlowchartBlock.new(
-			blocks_amount, tool_menu.AddingBlockTypeByOptionID[id]
+			blocks_amount,
+			tool_menu.AddingBlockTypeByOptionID[id],
+			"",
+			Vector2(tool_menu.position) + scroll_offset / zoom
 		)
-		buffer.position_offset = Vector2i(Vector2(tool_menu.position) + scroll_offset / zoom)
 		blocks_amount += 1
 		add_child(buffer)
 	elif id == tool_menu.DeleteSelectedBlocksOptionID:
@@ -44,13 +50,18 @@ func _on_tool_menu_id_pressed(id: int):
 				and not child_buffer.type in [FlowchartBlocksTypes.Begin, FlowchartBlocksTypes.End]
 			):
 				delete_nodes_request.emit([child_buffer.name])
-				remove_child(child_buffer)
 			else:
 				child_index += 1
 	elif id == tool_menu.SelectAllBlocksOptionID:
 		for child in get_children():
 			if child is FlowchartBlock:
 				child.selected = true
+	elif id == tool_menu.SaveFlowchartOptionID:
+		_save_load_handler.save()
+	elif id == tool_menu.SaveFlowchartAsOptionID:
+		_save_load_handler.save_as()
+	elif id == tool_menu.LoadFlowchartOptionID:
+		_save_load_handler.load()
 	grab_focus()
 
 
@@ -191,6 +202,7 @@ func get_block_codes() -> Array[FLowchartBlockCode]:
 									else:
 										# Switching to 'then'
 										block_buffer = get_node(NodePath(con2["to_node"]))
+										con_index = 0
 									# We do all we need
 									break
 							break
@@ -200,7 +212,7 @@ func get_block_codes() -> Array[FLowchartBlockCode]:
 					if not branches_queue.is_empty() and is_previous_condition_if_block:
 						conditions_types_stack.push_back(false)
 						break
-	
+
 				blocks_codes.append(
 					FLowchartBlockCode.new(block_buffer.id, block_buffer.get_code())
 				)
@@ -225,6 +237,13 @@ func _gui_input(event):
 			_on_tool_menu_id_pressed(tool_menu.DeleteSelectedBlocksOptionID)
 		elif event.keycode == KEY_A:
 			_on_tool_menu_id_pressed(tool_menu.SelectAllBlocksOptionID)
+		elif event.keycode == KEY_S and event.ctrl_pressed:
+			if event.shift_pressed:
+				_on_tool_menu_id_pressed(tool_menu.SaveFlowchartAsOptionID)
+			else:
+				_on_tool_menu_id_pressed(tool_menu.SaveFlowchartOptionID)
+		elif event.keycode == KEY_O and event.ctrl_pressed:
+			_on_tool_menu_id_pressed(tool_menu.LoadFlowchartOptionID)
 
 
 func _ready():
@@ -239,7 +258,7 @@ func _ready():
 
 func _on_connection_requested(
 	from_node: StringName, from_port: int, to_node: StringName, to_port: int
-):
+) -> void:
 	if from_node != to_node:
 		for con in get_connection_list():
 			if con["from_node"] == from_node and con["from_port"] == from_port:
@@ -254,7 +273,7 @@ func _on_connection_requested(
 
 func _on_disconnection_requested(
 	from_node: StringName, from_port: int, to_node: StringName, to_port: int
-):
+) -> void:
 	disconnect_node(
 		from_node,
 		from_port,
@@ -263,7 +282,9 @@ func _on_disconnection_requested(
 	)
 
 
-func _on_connected_to_empty(from_node: StringName, from_port: int, release_position: Vector2):
+func _on_connected_to_empty(
+	from_node: StringName, from_port: int, _release_position: Vector2
+) -> void:
 	for con in get_connection_list():
 		if con["from_node"] == from_node and con["from_port"] == from_port:
 			disconnect_node(
@@ -274,7 +295,8 @@ func _on_connected_to_empty(from_node: StringName, from_port: int, release_posit
 			)
 
 
-func _on_delete_nodes_requested(nodes: Array):
+func _on_delete_nodes_requested(nodes: Array) -> void:
+	# Clear nodes connections
 	for node in nodes:
 		for con in get_connection_list():
 			if con["from_node"] == node or con["to_node"] == node:
@@ -287,3 +309,84 @@ func _on_delete_nodes_requested(nodes: Array):
 						con["to_port"],
 					)
 				)
+	# Remove nodes
+	for node in nodes:
+		remove_child(get_node(NodePath(node)))
+
+
+## Return a flowchart state as a dictionary; State needed for saving/loading
+func get_state() -> Dictionary:
+	var state: Dictionary = {}
+
+	var blocks_buffer: Array[Dictionary] = []
+	for child in get_children():
+		if child is FlowchartBlock:
+			blocks_buffer.append(child.get_state())
+
+	state["blocks"] = blocks_buffer
+	state["connections"] = []
+	var cons: Array[Dictionary] = get_connection_list()
+	for con in cons:
+		(
+			state["connections"]
+			. append(
+				{
+					"from_node": get_node(NodePath(con["from_node"])).id,
+					"from_port": con["from_port"],
+					"to_node": get_node(NodePath(con["to_node"])).id,
+					"to_port": con["to_port"],
+				}
+			)
+		)
+
+	return state
+
+
+## Set inputted flowchart state as current flowchart state; State needed for saving/loading
+func set_state(state: Dictionary) -> void:
+	var blocks_amount_buffer: int = 0
+	var child_index: int = 0
+	while child_index < get_child_count():
+		var child_buffer = get_child(child_index)
+		if child_buffer is FlowchartBlock:
+			delete_nodes_request.emit([child_buffer.name])
+		else:
+			child_index += 1
+
+	var blocks_names_by_id: Dictionary = {}
+
+	for block in state["blocks"]:
+		var block_buffer: FlowchartBlock = FlowchartBlock.new(
+			block["id"],
+			FlowchartBlocksTypes.from_name(block["type"]),
+			block["text"],
+			Vector2(block["position_offset_x"], block["position_offset_y"])
+		)
+		if blocks_amount_buffer < block_buffer.id:
+			blocks_amount_buffer = block_buffer.id
+		add_child(block_buffer)
+		blocks_names_by_id[block_buffer.id] = block_buffer.name
+	blocks_amount = blocks_amount_buffer
+
+	var children = get_children()
+	for con in state["connections"]:
+		var from_block: FlowchartBlock = null
+		var to_block: FlowchartBlock = null
+		for child in children:
+			if child is FlowchartBlock:
+				if child.id == con["from_node"]:
+					from_block = child
+				elif child.id == con["to_node"]:
+					to_block = child
+			if from_block != null and to_block != null:
+				connection_request.emit(
+					blocks_names_by_id[from_block.id],
+					con["from_port"],
+					blocks_names_by_id[to_block.id],
+					con["to_port"]
+				)
+				break
+
+
+func _on_state_loaded(state: Dictionary) -> void:
+	set_state(state)
