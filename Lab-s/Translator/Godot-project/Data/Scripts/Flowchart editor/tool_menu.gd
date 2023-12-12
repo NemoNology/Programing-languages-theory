@@ -11,6 +11,9 @@ static var AddingBlockTypeByOptionID: Dictionary = {
 }
 static var DeleteSelectedBlocksOptionID: int = 8
 static var SelectAllBlocksOptionID: int = 7
+static var SaveFlowchartOptionID: int = 10
+static var SaveFlowchartAsOptionID: int = 11
+static var LoadFlowchartOptionID: int = 12
 
 
 func _init():
@@ -23,3 +26,7 @@ func _init():
 	add_separator()
 	add_item("Выделить все блоки")
 	add_item("Удалить выделенные блоки")
+	add_separator()
+	add_item("Сохранить блок-схему")
+	add_item("Сохранить блок-схему как..")
+	add_item("Загрузить блок-схему")
