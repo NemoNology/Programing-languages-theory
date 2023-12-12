@@ -11,7 +11,7 @@ static var Obr: String = "("
 ## Close brackets
 static var Cbr: String = ")"
 ## Separator - '.'
-static var Separatop: String = ")"
+static var Separatop: String = "."
 ## If - conditional operator
 static var If: String = "если"
 ## While - loop
