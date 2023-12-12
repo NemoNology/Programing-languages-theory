@@ -126,13 +126,11 @@ func check_flowchart_blocks() -> PackedStringArray:
 				errors.append("Блок %s не имеет начала" % child.id)
 	# Check condition block
 	while conditions_starts.size() > 0:
-		if conditions_ends.size() > 0:
-			conditions_starts.pop_back()
-			conditions_ends.pop_back()
-		else:
-			for block_id in conditions_starts:
-				errors.append("Блок условия %s не закрыт блоком конца условия" % block_id)
+		if conditions_ends.size() < 1:
 			break
+		conditions_starts.pop_back()
+		conditions_ends.pop_back()
+		
 	# Check condition end block
 	for block_id in conditions_ends:
 		errors.append("Блок конца условия %s закрывает несуществующий блок условия" % block_id)
