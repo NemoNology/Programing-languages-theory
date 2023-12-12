@@ -95,22 +95,6 @@ theme_override_colors/background_color = Color(0.823529, 0.823529, 0.823529, 1)
 theme_override_colors/font_readonly_color = Color(0, 0, 0, 1)
 editable = false
 
-[node name="AST" type="VBoxContainer" parent="TabContainer/Переводчик/VBox/HBox/Not code"]
-layout_mode = 2
-size_flags_vertical = 3
-
-[node name="Title" type="Label" parent="TabContainer/Переводчик/VBox/HBox/Not code/AST"]
-layout_mode = 2
-theme_override_colors/font_color = Color(0, 0, 0, 1)
-text = "Абстрактное синтаксичесоке дерево:"
-
-[node name="Text" type="TextEdit" parent="TabContainer/Переводчик/VBox/HBox/Not code/AST"]
-layout_mode = 2
-size_flags_vertical = 3
-theme_override_colors/background_color = Color(0.823529, 0.823529, 0.823529, 1)
-theme_override_colors/font_readonly_color = Color(0, 0, 0, 1)
-editable = false
-
 [node name="Code" type="VBoxContainer" parent="TabContainer/Переводчик/VBox/HBox"]
 layout_mode = 2
 size_flags_horizontal = 3
