@@ -38,7 +38,6 @@ scroll_offset = Vector2(0, -31)
 script = ExtResource("2_how57")
 
 [node name="Переводчик" type="TabBar" parent="TabContainer"]
-visible = false
 layout_mode = 2
 
 [node name="VBox" type="VBoxContainer" parent="TabContainer/Переводчик"]
@@ -80,6 +79,7 @@ theme_override_colors/font_readonly_color = Color(0, 0, 0, 1)
 editable = false
 
 [node name="Variables" type="VBoxContainer" parent="TabContainer/Переводчик/VBox/HBox/Not code"]
+visible = false
 layout_mode = 2
 size_flags_vertical = 3
 
@@ -89,6 +89,21 @@ theme_override_colors/font_color = Color(0, 0, 0, 1)
 text = "Переменные:"
 
 [node name="Text" type="TextEdit" parent="TabContainer/Переводчик/VBox/HBox/Not code/Variables"]
+layout_mode = 2
+size_flags_vertical = 3
+theme_override_colors/background_color = Color(0.823529, 0.823529, 0.823529, 1)
+theme_override_colors/font_readonly_color = Color(0, 0, 0, 1)
+editable = false
+
+[node name="Warnings" type="VBoxContainer" parent="TabContainer/Переводчик/VBox/HBox/Not code"]
+layout_mode = 2
+
+[node name="Title" type="Label" parent="TabContainer/Переводчик/VBox/HBox/Not code/Warnings"]
+layout_mode = 2
+theme_override_colors/font_color = Color(0, 0, 0, 1)
+text = "Предупреждения:"
+
+[node name="Text" type="TextEdit" parent="TabContainer/Переводчик/VBox/HBox/Not code/Warnings"]
 layout_mode = 2
 size_flags_vertical = 3
 theme_override_colors/background_color = Color(0.823529, 0.823529, 0.823529, 1)
