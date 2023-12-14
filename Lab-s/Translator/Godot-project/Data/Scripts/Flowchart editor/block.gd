@@ -22,7 +22,7 @@ func _init(
 ):
 	id = block_id
 	type = block_type
-	input = (FlowchartBlockTextEdit.new(block_type.flat))
+	input = FlowchartBlockTextEdit.new(block_type.flat)
 	shape = block_type.shape.new_copy()
 
 	title = "%s: %s" % [str(id), block_type.type_name]
@@ -80,10 +80,13 @@ func _init(
 func get_code() -> String:
 	var code_buffer: String = input.text
 	if type == FlowchartBlocksTypes.HandInput:
-		code_buffer = (
-			" %s %s %s%s "
-			% [input.text, LexemeTypes.Assign, LexemeTypes.Cin, LexemeTypes.Separatop]
-		)
+		if RegEx.create_from_string("^\\s*$").search(input.text):
+			code_buffer = " %s " % LexemeTypes.Cin
+		else:
+			code_buffer = (
+				" %s %s %s%s "
+				% [input.text, LexemeTypes.Assign, LexemeTypes.Cin, LexemeTypes.Separatop]
+			)
 	elif type == FlowchartBlocksTypes.Output:
 		code_buffer = " %s %s%s " % [LexemeTypes.Cout, input.text, LexemeTypes.Separatop]
 	elif type == FlowchartBlocksTypes.ConditionIf:
