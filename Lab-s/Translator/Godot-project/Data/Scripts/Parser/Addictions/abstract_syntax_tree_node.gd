@@ -9,7 +9,3 @@ var right: AbstractSyntaxTreeNode
 func _init(left_node: AbstractSyntaxTreeNode = null, right_node: AbstractSyntaxTreeNode = null):
 	left = left_node
 	right = right_node
-
-
-func parse():
-	pass
