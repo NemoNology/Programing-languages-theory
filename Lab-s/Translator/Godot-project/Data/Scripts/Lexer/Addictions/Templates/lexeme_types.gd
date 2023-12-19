@@ -46,9 +46,9 @@ static var Less: String = "меньше"
 static var Equals: String = "равно"
 ## Variable - variable ID
 static var Var: String = "переменная"
-## Integer
-static var Int: String = "целочисленное"
+## Number
+static var Num: String = "число"
 ## String
-static var StringType: String = "строка"
+static var Str: String = "строка"
 ## Unknown lexeme type
 static var Unknown: String = "неизвестно"
