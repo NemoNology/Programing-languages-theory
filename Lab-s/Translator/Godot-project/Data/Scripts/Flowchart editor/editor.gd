@@ -70,8 +70,8 @@ func _on_tool_menu_id_pressed(id: int) -> void:
 ## -) Check condition blocks closing by condition end blocks;
 ## -) Check empty blocks;
 ## Returns: errors and warnings as ErrorsWarnings
-func check_flowchart_blocks() -> ErrorsWarnings:
-	var errors_warnings: ErrorsWarnings = ErrorsWarnings.new()
+func check_flowchart_blocks() -> ParsingResult:
+	var result: ParsingResult = ParsingResult.new()
 	var cons: Array[Dictionary] = get_connection_list()
 	var conditions_starts: Array[int] = []
 	var conditions_ends: Array[int] = []
@@ -92,7 +92,7 @@ func check_flowchart_blocks() -> ErrorsWarnings:
 				conditions_ends.push_back(child.id)
 			# Check block emptiness
 			if not child.type.flat and is_whitespace_regex.search(child.input.text):
-				errors_warnings.warnings.append("У блока %s отсутствует сожержимое" % child.id)
+				result.warnings.append(Error.new(Error.EmptyBlockErrorText, Vector3i(child.id, 0, 0)))
 			for con: Dictionary in cons:
 				if is_there_next_block and is_there_previous_block:
 					break
@@ -102,28 +102,36 @@ func check_flowchart_blocks() -> ErrorsWarnings:
 						is_there_next_block = true
 						if is_condition_block:
 							if to_node_type == FlowchartBlocksTypes.ConditionEnd:
-								errors_warnings.errors.append("Блок условия %s не содержит тела" % child.id)
+								result.errors.append(
+									Error.new(
+										Error.EmptyConditionBlockBodyErrorText, Vector3i(child.id, 0, 0)
+									)
+								)
 							else:
 								is_condition_block = false
 						elif (
 							child.type == FlowchartBlocksTypes.Begin
 							and to_node_type == FlowchartBlocksTypes.End
 						):
-							errors_warnings.warnings.append("Тело блок-схемы не сожержит алгоритм")
+							result.warnings.append(
+								Error.new(Error.EmptyFlowchartErrorText, Vector3i(child.id, 0, 0))
+							)
 					else:
 						if (
 							is_condition_block
 							and (to_node_type == FlowchartBlocksTypes.ConditionEnd)
 						):
 							conditions_starts.push_back(child.id)
-							errors_warnings.errors.append(
-								"Тело \'иначе\' блока условия %s является пустым" % child.id
+							result.errors.append(
+								Error.new(Error.EmptyElseBodyErrorText, Vector3i(child.id, 0, 0))
 							)
 				is_there_previous_block = con["to_node"] == child.name or is_there_previous_block
 			if not is_there_next_block:
-				errors_warnings.errors.append("Блок %s не имеет продолжения" % child.id)
+				result.errors.append(
+					Error.new(Error.NoBlockContinuationErrorText, Vector3i(child.id, 0, 0))
+				)
 			if not is_there_previous_block:
-				errors_warnings.errors.append("Блок %s не имеет начала" % child.id)
+				result.errors.append(Error.new(Error.NoBlockBeginningErrorText, Vector3i(child.id, 0, 0)))
 	# Check condition block
 	while conditions_starts.size() > 0:
 		if conditions_ends.size() < 1:
@@ -133,11 +141,9 @@ func check_flowchart_blocks() -> ErrorsWarnings:
 
 	# Check condition end block
 	for block_id in conditions_ends:
-		errors_warnings.errors.append(
-			"Блок конца условия %s закрывает несуществующий блок условия" % block_id
-		)
+		result.errors.append(Error.new(Error.ExcessEndConditionBlockErrorText, Vector3i(block_id, 0, 0)))
 
-	return errors_warnings
+	return result
 
 
 ## Return flowchart full code -> list of FLowchartBlockCode
