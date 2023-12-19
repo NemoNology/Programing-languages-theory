@@ -17,25 +17,27 @@ func _ready():
 
 
 func _on_translate_pressed():
-	var errors_warnings: ErrorsWarnings = flowchart_editor.check_flowchart_blocks()
+	var parsing_result: ParsingResult = flowchart_editor.check_flowchart_blocks()
 	errors_output.visible = true
 	variables_output.visible = false
 	errors_output.text = ""
 	warnings_output.text = ""
 	code_output.text = ""
 	variables_output.text = ""
-	if errors_warnings.errors.size() > 0:
-		for er in errors_warnings.errors:
-			errors_output.text += er + "\n"
+	if parsing_result.errors.size() > 0:
+		for er in parsing_result.errors:
+			errors_output.text += er.to_string() + "\n"
 		return
 		
-	#var variables_table: Dictionary = AbstractSyntaxTree.parse_branch([])
+	#var variables_table: Dictionary = Parser.parse_branch([])
 	#for variable in variables_table:
 		#variables_output.text += "%s: %s\n" % [variable, variables_table[variable]]
 			
 	errors_output.text = "Ошибок не найдено..."
 	variables_output.visible = true
 	errors_output.visible = false
+
+	
 	
 	var blocks_codes: Array[FLowchartBlockCode] = flowchart_editor.get_block_codes()
 	for block in blocks_codes:
