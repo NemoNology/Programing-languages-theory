@@ -38,6 +38,7 @@ scroll_offset = Vector2(0, -31)
 script = ExtResource("2_how57")
 
 [node name="Переводчик" type="TabBar" parent="TabContainer"]
+visible = false
 layout_mode = 2
 
 [node name="VBox" type="VBoxContainer" parent="TabContainer/Переводчик"]
