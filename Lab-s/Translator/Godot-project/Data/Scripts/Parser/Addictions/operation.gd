@@ -1,23 +1,21 @@
 class_name Operation
 
 var priority: int
-var allowed_first_operand_types: PackedStringArray
-var allowed_second_operand_types: PackedStringArray
+var allowed_first_operand_types: PackedStringArray = []
+var allowed_second_operand_types: PackedStringArray = []
 var position: Vector3i
 
 
-func _init(init_priority: int, init_allowed_first_operand_types: PackedStringArray, init_allowed_second_operand_types: PackedStringArray, init_position: Vector3i):
-	priority = init_priority
-	allowed_first_operand_types = init_allowed_first_operand_types
-	allowed_second_operand_types = init_allowed_second_operand_types
+func _init(init_position: Vector3i, init_priority: int):
 	position = init_position
+	priority = init_priority
 
 
 func check_input_operands(
 	out_operands_stack: Array[Operand], 
 	out_parsing_result: ParsingResult
 	) -> bool:
-	if allowed_second_operand_types == null:
+	if allowed_second_operand_types.is_empty():
 		if not (out_operands_stack[-1].type in allowed_first_operand_types):
 			out_parsing_result.errors.append(
 				Error.get_wrong_operand_type_error(
@@ -99,6 +97,13 @@ static func get_priority_by_lexeme_type(lexeme_type: String) -> int:
 		]
 	):
 		return 4
+	elif (
+		lexeme_type
+		in [
+			LexemeTypes.Assign, LexemeTypes.If, LexemeTypes.While,
+		]
+	):
+		return 5
 
 	return -1
 
@@ -108,5 +113,9 @@ static func init_by_lexeme(lexeme: Lexeme, out_parsing_result) -> Operation:
 		out_parsing_result.errors.append(Error.new(Error.UnknownOperationErrorText, lexeme.position))
 		return null
 	
-	# match lexeme.type:
+	var priority: int = get_priority_by_lexeme_type(lexeme.type)
+	match lexeme.type:
+		LexemeTypes.Assign:
+			return AssignOperation.new(lexeme.position, priority)
+			
 	return null
