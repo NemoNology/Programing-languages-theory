@@ -81,7 +81,7 @@ func get_code() -> String:
 	var code_buffer: String = input.text
 	if type == FlowchartBlocksTypes.HandInput:
 		if RegEx.create_from_string("^\\s*$").search(input.text):
-			code_buffer = " %s " % LexemeTypes.Cin
+			code_buffer = " %s%s " % [LexemeTypes.Cin, LexemeTypes.Separatop]
 		else:
 			code_buffer = (
 				" %s %s %s%s "
