@@ -21,11 +21,11 @@ func _to_string():
 	)
 	
 
-static func get_wrong_operand_type_error(expected_types: PackedStringArray, getted_type: String, position: Vector3i):
+static func get_wrong_operand_type_error(expected_types: PackedStringArray, getted_type: String, error_position: Vector3i):
 	var error_text: String = "%s: ожидалось " % WrongOperandTypeErrorText
 	for type in expected_types:
-		error_text += type + ", "
-	return Error.new(error_text.substr(0, error_text.length() - 3) + ", но получен %s" % getted_type, position)
+		error_text += type.to_lower() + ", "
+	return Error.new(error_text.substr(0, error_text.length() - 3) + ", но получен %s" % getted_type, error_position)
 	
 
 static var UnknownLexemeErrorText: String = "Неизвестная лексема"
@@ -41,6 +41,6 @@ static var ExcessBracketsClosingErrorText: String = "Попытка закрыт
 static var ExcessBracketsOpeningErrorText: String = "Незакрытая скобка"
 static var NoOperandsErrorText: String = "Отсутсвует(ют) операнд(ы)"
 static var UnknownOperationErrorText: String = "Неизвестная операция"
-static var UnknownVariableErrorText: String = "Неизвестная операция"
+static var UnknownVariableErrorText: String = "Неизвестная переменная"
 static var WrongOperandTypeErrorText: String = "Неверный тип операнда(ов)"
 static var DivisionByZeroTypeErrorText: String = "Деление на ноль"
