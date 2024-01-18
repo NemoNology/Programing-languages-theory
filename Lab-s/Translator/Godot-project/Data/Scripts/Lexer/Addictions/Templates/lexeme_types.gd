@@ -28,6 +28,8 @@ static var Sub: String = "минус"
 static var Mul: String = "умножить"
 ## Division - operator
 static var Div: String = "разделить"
+## Boolean
+static var Bool: String = "логическая переменная"
 ## False
 static var False: String = "ложь"
 ## True
