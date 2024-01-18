@@ -63,33 +63,16 @@ theme_override_constants/separation = 20
 layout_mode = 2
 size_flags_horizontal = 3
 
-[node name="Errors" type="VBoxContainer" parent="TabContainer/Переводчик/VBox/HBox/Not code"]
+[node name="Errors_Variables" type="VBoxContainer" parent="TabContainer/Переводчик/VBox/HBox/Not code"]
 layout_mode = 2
 size_flags_vertical = 3
 
-[node name="Title" type="Label" parent="TabContainer/Переводчик/VBox/HBox/Not code/Errors"]
+[node name="Title" type="Label" parent="TabContainer/Переводчик/VBox/HBox/Not code/Errors_Variables"]
 layout_mode = 2
 theme_override_colors/font_color = Color(0, 0, 0, 1)
 text = "Ошибки:"
 
-[node name="Text" type="TextEdit" parent="TabContainer/Переводчик/VBox/HBox/Not code/Errors"]
-layout_mode = 2
-size_flags_vertical = 3
-theme_override_colors/background_color = Color(0.823529, 0.823529, 0.823529, 1)
-theme_override_colors/font_readonly_color = Color(0, 0, 0, 1)
-editable = false
-
-[node name="Variables" type="VBoxContainer" parent="TabContainer/Переводчик/VBox/HBox/Not code"]
-visible = false
-layout_mode = 2
-size_flags_vertical = 3
-
-[node name="Title" type="Label" parent="TabContainer/Переводчик/VBox/HBox/Not code/Variables"]
-layout_mode = 2
-theme_override_colors/font_color = Color(0, 0, 0, 1)
-text = "Переменные:"
-
-[node name="Text" type="TextEdit" parent="TabContainer/Переводчик/VBox/HBox/Not code/Variables"]
+[node name="Text" type="TextEdit" parent="TabContainer/Переводчик/VBox/HBox/Not code/Errors_Variables"]
 layout_mode = 2
 size_flags_vertical = 3
 theme_override_colors/background_color = Color(0.823529, 0.823529, 0.823529, 1)
@@ -98,6 +81,7 @@ editable = false
 
 [node name="Warnings" type="VBoxContainer" parent="TabContainer/Переводчик/VBox/HBox/Not code"]
 layout_mode = 2
+size_flags_vertical = 3
 
 [node name="Title" type="Label" parent="TabContainer/Переводчик/VBox/HBox/Not code/Warnings"]
 layout_mode = 2
