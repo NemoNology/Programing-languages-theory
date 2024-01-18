@@ -13,3 +13,10 @@ func _init(
 	errors = start_errors
 	warnings = start_warnings
 	variables = start_variables
+
+
+func clear(is_clean_warnings: bool = true):
+	errors.clear()
+	if is_clean_warnings:
+		warnings.clear()
+	variables.clear()
