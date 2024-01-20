@@ -54,3 +54,33 @@ static var Num: String = "число"
 static var Str: String = "строка"
 ## Unknown lexeme type
 static var Unknown: String = "неизвестно"
+
+var lexeme_types: Dictionary = {
+	"вывод": Cout,
+	"ввод": Cin,
+	"будет": Assign,
+	"(": Obr,
+	")": Cbr,
+	".": Separatop,
+	"если": If,
+	"пока": While,
+	"иначе": Else,
+	"конец": End,
+	"плюс": Add,
+	"минус": Sub,
+	"умножить": Mul,
+	"разделить": Div,
+	"логическая переменная": Bool,
+	"ложь": False,
+	"правда": True,
+	"не": Not,
+	"и": And,
+	"или": Or,
+	"больше": More,
+	"меньше": Less,
+	"равно": Equals,
+	"переменная": Var,
+	"число": Num,
+	"строка": Str,
+	"неизвестно": Unknown
+}
