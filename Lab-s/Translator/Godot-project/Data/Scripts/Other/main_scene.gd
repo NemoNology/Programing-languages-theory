@@ -98,14 +98,15 @@ func _on_translate_pressed():
 		Lexeme.new(LexemeTypes.Separatop, ".", Vector3i(4, 0, 4)),
 	]
 
+	var test_lexer: Array[Lexeme] = Lexer.get_lexemes(code_output.text)
 
-	var lexemes: Array[Lexeme] = test_if
+	var lexemes: Array[Lexeme] = test_lexer
 
 	parsing_result.clear(false)
 
 	Parser.parse(lexemes, parsing_result)
-	for l in lexemes:
-		code_output.text += l.text + "\n"
+	#for l in lexemes:
+		#code_output.text += l.text + "\n"
 
 	if parsing_result.errors.size() > 0:
 		for er in parsing_result.errors:
@@ -121,7 +122,9 @@ func _on_translate_pressed():
 	var blocks_codes: Array[FLowchartBlockCode] = flowchart_editor.get_block_codes()
 	for block in blocks_codes:
 		code_output.text += block.to_string() + "\n"
-
+		
+	#Lexer.get_lexemes(code_output.text)
+	
 	for warning in parsing_result.warnings:
 		warnings_output.text += warning.to_string() + "\n"
 
