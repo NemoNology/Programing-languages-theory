@@ -55,7 +55,12 @@ static var Str: String = "строка"
 ## Unknown lexeme type
 static var Unknown: String = "неизвестно"
 
-var lexeme_types: Dictionary = {
+static var AllLexemes: PackedStringArray = [
+	# TODO: this
+]
+
+# TODO: Remove this
+static var lexeme_types_as_dictionary: Dictionary = {
 	"вывод": Cout,
 	"ввод": Cin,
 	"будет": Assign,
