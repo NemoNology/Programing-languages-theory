@@ -31,9 +31,8 @@ func _on_translate_pressed():
 			errors_variables_output.text += er.to_string() + "\n"
 		return
 
-	var test_lexer: Array[Lexeme] = Lexer.get_lexemes(code_output.text)
-
-	var lexemes: Array[Lexeme] = test_lexer
+	
+	var lexemes: Array[Lexeme] = Lexer.get_lexemes(code_output.text)
 
 	Parser.parse(lexemes, parsing_result)
 
