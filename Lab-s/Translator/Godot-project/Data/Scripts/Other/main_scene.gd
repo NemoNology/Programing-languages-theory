@@ -30,12 +30,7 @@ func _on_translate_pressed():
 		for er in parsing_result.errors:
 			errors_variables_output.text += er.to_string() + "\n"
 		return
-
-	
-	#var lexemes: Array[Lexeme] = test_if
-
-	#Parser.parse(lexemes, parsing_result)
-
+		
 	if parsing_result.errors.size() > 0:
 		for er in parsing_result.errors:
 			errors_variables_output.text += er.to_string() + "\n"
@@ -48,12 +43,15 @@ func _on_translate_pressed():
 	errors_variables_output.text = "Переменных не объявлено..."
 
 	var blocks_codes: Array[FLowchartBlockCode] = flowchart_editor.get_block_codes()
+	
+	# Getting array of lexemes
 	var result_lexemes: Array[Lexeme]
 	for block in blocks_codes:
 		result_lexemes.append_array(Lexer.get_lexemes(block))
 		code_output.text += block.to_string() + "\n"
 		
 	#var lexemes_test = Lexer.get_lexemes(code_output.text)
+	Parser.parse(result_lexemes, parsing_result)
 	Translator.translate(result_lexemes)
 	
 	for warning in parsing_result.warnings:
