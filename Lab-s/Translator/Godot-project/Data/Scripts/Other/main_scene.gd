@@ -31,82 +31,11 @@ func _on_translate_pressed():
 			errors_variables_output.text += er.to_string() + "\n"
 		return
 
-	var test_cutie: Array[Lexeme] = [
-		Lexeme.new(LexemeTypes.Var, "a", Vector3i(0, 0, 1)),
-		Lexeme.new(LexemeTypes.Assign, "будет", Vector3i(0, 0, 2)),
-		Lexeme.new(LexemeTypes.Str, "", Vector3i(0, 0, 3)),
-		Lexeme.new(LexemeTypes.Separatop, ".", Vector3i(0, 0, 4)),
-		Lexeme.new(LexemeTypes.While, "пока", Vector3i(1, 0, 1)),
-		Lexeme.new(LexemeTypes.Not, "ne", Vector3i(1, 0, 2)),
-		Lexeme.new(LexemeTypes.Var, "a", Vector3i(1, 0, 3)),
-		Lexeme.new(LexemeTypes.Equals, "ravno", Vector3i(1, 0, 4)),
-		Lexeme.new(LexemeTypes.Str, "me", Vector3i(1, 0, 5)),
-		Lexeme.new(LexemeTypes.Separatop, ".", Vector3i(1, 0, 6)),
-		Lexeme.new(LexemeTypes.Cout, "vivod", Vector3i(2, 0, 1)),
-		Lexeme.new(LexemeTypes.Str, "Egaday who cutie", Vector3i(2, 0, 2)),
-		Lexeme.new(LexemeTypes.Separatop, ".", Vector3i(2, 0, 3)),
-		Lexeme.new(LexemeTypes.Var, "a", Vector3i(3, 0, 1)),
-		Lexeme.new(LexemeTypes.Assign, "budet", Vector3i(3, 0, 2)),
-		Lexeme.new(LexemeTypes.Cin, "vvod", Vector3i(3, 0, 3)),
-		Lexeme.new(LexemeTypes.Separatop, ".", Vector3i(3, 0, 4)),
-		Lexeme.new(LexemeTypes.End, "konec", Vector3i(4, 0, 1)),
-		Lexeme.new(LexemeTypes.Separatop, ".", Vector3i(4, 0, 2)),
-		Lexeme.new(LexemeTypes.Cout, "vivod", Vector3i(5, 0, 3)),
-		Lexeme.new(LexemeTypes.Str, "Great!", Vector3i(5, 0, 4)),
-		Lexeme.new(LexemeTypes.Separatop, ".", Vector3i(5, 0, 5)),
-	]
-
-	var test_devide_by_zero: Array[Lexeme] = [
-		Lexeme.new(LexemeTypes.Var, "a", Vector3i(0, 0, 1)),
-		Lexeme.new(LexemeTypes.Assign, "будет", Vector3i(0, 0, 2)),
-		Lexeme.new(LexemeTypes.Num, "1", Vector3i(0, 0, 3)),
-		Lexeme.new(LexemeTypes.Div, "/", Vector3i(0, 0, 4)),
-		Lexeme.new(LexemeTypes.Num, "0", Vector3i(0, 0, 5)),
-		Lexeme.new(LexemeTypes.Separatop, ".", Vector3i(0, 0, 6)),
-	]
-
-	var test_school_math: Array[Lexeme] = [
-		Lexeme.new(LexemeTypes.Var, "a", Vector3i(0, 0, 1)),
-		Lexeme.new(LexemeTypes.Assign, "будет", Vector3i(0, 0, 2)),
-		Lexeme.new(LexemeTypes.Num, "2", Vector3i(0, 0, 3)),
-		Lexeme.new(LexemeTypes.Add, "+", Vector3i(0, 0, 4)),
-		Lexeme.new(LexemeTypes.Num, "2", Vector3i(0, 0, 3)),
-		Lexeme.new(LexemeTypes.Mul, "*", Vector3i(0, 0, 4)),
-		Lexeme.new(LexemeTypes.Num, "2", Vector3i(0, 0, 3)),
-		Lexeme.new(LexemeTypes.Separatop, ".", Vector3i(0, 0, 6)),
-	]
-
-	var test_if: Array[Lexeme] = [
-		Lexeme.new(LexemeTypes.Var, "а", Vector3i(0, 0, 1)),
-		Lexeme.new(LexemeTypes.Assign, "будет", Vector3i(0, 0, 2)),
-		Lexeme.new(LexemeTypes.Str, "123", Vector3i(0, 0, 3)),
-		Lexeme.new(LexemeTypes.Separatop, ".", Vector3i(0, 0, 4)),
-		Lexeme.new(LexemeTypes.If, "если", Vector3i(1, 0, 1)),
-		Lexeme.new(LexemeTypes.Var, "а", Vector3i(1, 0, 2)),
-		Lexeme.new(LexemeTypes.Equals, "равно", Vector3i(1, 0, 3)),
-		Lexeme.new(LexemeTypes.Str, "123", Vector3i(1, 0, 4)),
-		Lexeme.new(LexemeTypes.Separatop, ".", Vector3i(1, 0, 5)),
-		Lexeme.new(LexemeTypes.Var, "ф", Vector3i(2, 0, 1)),
-		Lexeme.new(LexemeTypes.Assign, "будет", Vector3i(2, 0, 2)),
-		Lexeme.new(LexemeTypes.True, "истина", Vector3i(2, 0, 3)),
-		Lexeme.new(LexemeTypes.Separatop, ".", Vector3i(2, 0, 4)),
-		Lexeme.new(LexemeTypes.Else, "иначе", Vector3i(3, 0, 1)),
-		Lexeme.new(LexemeTypes.Separatop, ".", Vector3i(3, 0, 2)),
-		Lexeme.new(LexemeTypes.Var, "ф", Vector3i(4, 0, 1)),
-		Lexeme.new(LexemeTypes.Assign, "будет", Vector3i(4, 0, 2)),
-		Lexeme.new(LexemeTypes.False, "ложь", Vector3i(4, 0, 3)),
-		Lexeme.new(LexemeTypes.Separatop, ".", Vector3i(4, 0, 4)),
-	]
-
 	var test_lexer: Array[Lexeme] = Lexer.get_lexemes(code_output.text)
 
 	var lexemes: Array[Lexeme] = test_lexer
 
-	parsing_result.clear(false)
-
 	Parser.parse(lexemes, parsing_result)
-	#for l in lexemes:
-		#code_output.text += l.text + "\n"
 
 	if parsing_result.errors.size() > 0:
 		for er in parsing_result.errors:
