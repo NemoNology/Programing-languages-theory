@@ -67,7 +67,7 @@ static func match_lexeme(item: String, block: int, line: int, pos: int) -> Lexem
 			elif(item.begins_with("\"") and item.ends_with("\"")):
 				return(Lexeme.new(LexemeTypes.Str, item, Vector3i(block, line, pos)))
 			else:
-				return(Lexeme.new(LexemeTypes.Var, item, Vector3i(block, line, pos)))
+				return Lexeme.new(LexemeTypes.Var, item, Vector3i(block, line, pos))
 	
 static func get_lexemes(code: String) -> Array[Lexeme]:
 	var code_lines = code.split('\n')
@@ -83,5 +83,6 @@ static func get_lexemes(code: String) -> Array[Lexeme]:
 		var clean_line_split = split_line(clean_line)
 		for j in range(clean_line_split.size()):
 			pos = j
+			var lex = match_lexeme(clean_line_split[j], int(block), int(line), int(pos))
 			code_lexemes.append(match_lexeme(clean_line_split[j], int(block), int(line), int(pos)))
 	return code_lexemes

@@ -105,6 +105,7 @@ func _on_translate_pressed():
 	parsing_result.clear(false)
 
 	Parser.parse(lexemes, parsing_result)
+	#Translator.translate(test_lexer)
 	#for l in lexemes:
 		#code_output.text += l.text + "\n"
 
@@ -123,7 +124,8 @@ func _on_translate_pressed():
 	for block in blocks_codes:
 		code_output.text += block.to_string() + "\n"
 		
-	#Lexer.get_lexemes(code_output.text)
+	var lexemes_test = Lexer.get_lexemes(code_output.text)
+	Translator.translate(lexemes_test)
 	
 	for warning in parsing_result.warnings:
 		warnings_output.text += warning.to_string() + "\n"
