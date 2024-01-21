@@ -1,7 +1,8 @@
 class_name Translator
 
 static var python_templates = {
-	"вывод": "print",
+	LexemeTypes.Cout: "print",
+	# TODO: Not using magic constants
 	"ввод": "input()",
 	"будет": "=",
 	"(": "(",
