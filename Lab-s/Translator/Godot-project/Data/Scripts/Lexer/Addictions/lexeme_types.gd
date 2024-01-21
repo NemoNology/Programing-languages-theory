@@ -57,6 +57,33 @@ static var Unknown: String = "неизвестно"
 
 static var AllLexemes: PackedStringArray = [
 	# TODO: this
+	Cout,
+	Cin,
+	Assign,
+	Obr,
+	Cbr,
+	Separatop,
+	If,
+	While,
+	Else,
+	End,
+	Add,
+	Sub,
+	Mul,
+	Div,
+	Bool,
+	False,
+	True,
+	Not,
+	And,
+	Or,
+	More,
+	Less,
+	Equals,
+	Var,
+	Num,
+	Str,
+	Unknown,
 ]
 
 # TODO: Remove this
@@ -87,5 +114,5 @@ static var lexeme_types_as_dictionary: Dictionary = {
 	"переменная": Var,
 	"число": Num,
 	"строка": Str,
-	"неизвестно": Unknown
+	"неизвестно": Unknown,
 }
