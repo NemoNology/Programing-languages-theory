@@ -26,14 +26,8 @@ static func match_lexeme(item: String, block: int, line: int, pos: int) -> Lexem
 			return Lexeme.new(LexemeTypes.Var, item, Vector3i(block, line, pos))
 	
 static func get_lexemes(block: FLowchartBlockCode):
-	print(block.id)
 	var code_lexemes: Array[Lexeme] = []
 	var clean_line = split_line(block.code)
-	print(clean_line)
-		#var line = i
-		#var pos
-		#
-		#for j in range(clean_line_split.size()):
-			#pos = j
-			#code_lexemes.append(match_lexeme(clean_line_split[j], int(block), int(line), int(pos)))
-	#return code_lexemes
+	for j in range(clean_line.size()):
+		code_lexemes.append(match_lexeme(clean_line[j], block.id, 1, j))
+	return code_lexemes
