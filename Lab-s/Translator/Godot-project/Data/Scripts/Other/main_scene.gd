@@ -50,9 +50,8 @@ func _on_translate_pressed():
 		result_lexemes.append_array(Lexer.get_lexemes(block))
 		code_output.text += block.to_string() + "\n"
 		
-	#var lexemes_test = Lexer.get_lexemes(code_output.text)
 	Parser.parse(result_lexemes, parsing_result)
-	Translator.translate(result_lexemes)
+	var py_code:Array = Translator.translate(result_lexemes)
 	
 	for warning in parsing_result.warnings:
 		warnings_output.text += warning.to_string() + "\n"
