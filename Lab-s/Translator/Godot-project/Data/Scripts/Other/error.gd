@@ -24,11 +24,11 @@ func _to_string():
 static func get_wrong_operand_type_error(
 	expected_types: PackedStringArray, getted_type: String, error_position: Vector3i
 ):
-	var error_text: String = "%s: ожидалось " % WrongOperandTypeErrorText
+	var error_text: String = "%s: ожидалось '" % WrongOperandTypeErrorText
 	for type in expected_types:
-		error_text += type.to_lower() + ", "
+		error_text += type.to_lower() + "', "
 	return Error.new(
-		error_text.substr(0, error_text.length() - 3) + ", но получен %s" % getted_type,
+		error_text.substr(0, error_text.length() - 2) + ", но получен '%s'" % getted_type,
 		error_position
 	)
 
