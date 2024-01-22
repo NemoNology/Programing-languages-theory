@@ -43,14 +43,27 @@ func check_input_operands(
 			elif in_operands_stack[-1].value_type in allowed_first_operand_types:
 				return true
 			else:
-				if (
-					in_operands_stack[-1] in out_parsing_result.variables
-					and (
+				if in_operands_stack[-1] in out_parsing_result.variables:
+					if (
 						out_parsing_result.variables[in_operands_stack[-1].value].value_type
 						in allowed_first_operand_types
+					):
+						return true
+					else:
+						out_parsing_result.errors.append(
+							Error.new(
+								Error.WrongOperandTypeErrorText, in_operands_stack[-1].position
+							)
+						)
+						return false
+				else:
+					out_parsing_result.errors.append(
+						Error.new(
+							Error.UnknownVariableErrorText, in_operands_stack[-1].value_type, position
+						)
 					)
-				):
-					return true
+					return false
+
 	# Need two operands
 	else:
 		var o1_var: Operand
